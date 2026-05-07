@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order Helper</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --line: #d7dde5;
+      --text: #17202a;
+      --muted: #657184;
+      --accent: #1677ff;
+      --accent-strong: #0f5fc9;
+      --danger: #b42318;
+      --ok: #137333;
+      --warn: #a15c00;
+      --shadow: 0 10px 25px rgba(18, 28, 45, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Tahoma, "Noto Sans Thai", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px 0;
+    }
+
+    .view-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .view-buttons button.active,
+    .page-tab.active {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 360px minmax(420px, 1fr) 420px;
+      gap: 14px;
+      min-height: calc(100vh - 54px);
+      padding: 14px;
+    }
+
+    body.form-mode .app {
+      grid-template-columns: 360px minmax(420px, 1fr);
+    }
+
+    body.form-mode .result-panel,
+    body.form-mode .summary-panel,
+    body.orders-mode .form-panel,
+    body.orders-mode .summary-panel,
+    body.summary-mode .form-panel,
+    body.summary-mode .result-panel {
+      display: none;
+    }
+
+    body.orders-mode .app,
+    body.summary-mode .app {
+      grid-template-columns: 1fr;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1, h2 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    h2 { font-size: 16px; }
+
+    .body {
+      padding: 14px;
+    }
+
+    label {
+      display: block;
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 10px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.45;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(22, 119, 255, .12);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      padding: 9px 12px;
+      cursor: pointer;
+      min-height: 40px;
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    button.primary:hover {
+      background: var(--accent-strong);
+    }
+
+    button:hover {
+      border-color: #b9c3d0;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 26px;
+      font-size: 13px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--line);
+      flex: 0 0 auto;
+    }
+
+    .status.ok .dot { background: var(--ok); }
+    .status.warn .dot { background: var(--warn); }
+    .status.bad .dot { background: var(--danger); }
+
+    .errors {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--danger);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .output {
+      min-height: 300px;
+      white-space: pre-wrap;
+      font-family: Tahoma, "Noto Sans Thai", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .history {
+      display: grid;
+      gap: 8px;
+      max-height: 360px;
+      overflow: auto;
+    }
+
+    .page-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .order-count {
+      color: var(--muted);
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    .history-item {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px;
+      background: #fbfcfe;
+      cursor: pointer;
+    }
+
+    .history-item:hover {
+      border-color: var(--accent);
+    }
+
+    .history-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .history-text {
+      color: var(--muted);
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 10px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      background: #fbfcfe;
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .summary-total {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 4px 0;
+    }
+
+    .choice-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 40px;
+      align-items: center;
+    }
+
+    .choice {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      background: #fff;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .choice input {
+      width: auto;
+      margin: 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 1150px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="form-mode">
+  <nav class="topbar">
+    <div class="view-buttons">
+      <button id="formViewBtn" class="active">หน้ากรอกออเดอร์</button>
+      <button id="ordersViewBtn">หน้าออเดอร์</button>
+      <button id="summaryViewBtn">หน้าสรุปยอด</button>
+    </div>
+    <span class="small">แยกออเดอร์ตามเพจ</span>
+  </nav>
+
+  <main class="app">
+    <section class="panel form-panel">
+      <div class="panel-head">
+        <h1>ตัวช่วยสร้างออเดอร์</h1>
+        <span class="small">v1</span>
+      </div>
+      <div class="body">
+        <div class="field">
+          <label for="page">เพจ / สินค้า</label>
+          <select id="page"></select>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="prefix">Prefix</label>
+            <input id="prefix" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="orderNo">เลขออเดอร์</label>
+            <input id="orderNo" inputmode="numeric" autocomplete="off" value="1">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="price">ราคา / จำนวน</label>
+          <select id="price"></select>
+        </div>
+
+        <div class="actions">
+          <button id="nextBtn">เลขถัดไป</button>
+        </div>
+
+        <div style="height: 14px"></div>
+        <div class="status" id="status"><span class="dot"></span><span>พร้อมใช้งาน</span></div>
+      </div>
+    </section>
+
+    <section class="panel form-panel">
+      <div class="panel-head">
+        <h2>ข้อมูลออเดอร์</h2>
+        <span class="small">แก้ช่องนี้ก่อนคัดลอกได้</span>
+      </div>
+      <div class="body">
+        <div class="field">
+          <label for="raw">วางข้อมูลลูกค้า / ที่อยู่ ช่องเดียว</label>
+          <textarea id="raw" placeholder="วางข้อความจากแชทหรือที่อยู่ลูกค้าตรงนี้"></textarea>
+        </div>
+
+        <div class="actions" style="margin-bottom: 12px">
+          <button class="primary" id="parseBtn">ดึงข้อมูลจากช่องนี้</button>
+          <button id="clearBtn">ล้างข้อมูล</button>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label for="customerName">ชื่อลูกค้า</label>
+            <input id="customerName" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="fbName">ชื่อ FB</label>
+            <input id="fbName" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="phone">เบอร์โทร</label>
+          <input id="phone" inputmode="tel" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label for="address">ที่อยู่</label>
+          <textarea id="address" style="min-height: 92px"></textarea>
+        </div>
+
+        <div class="grid">
+          <div class="field" id="optionField">
+            <label id="optionLabel">สี / ไซซ์</label>
+            <div class="choice-wrap" id="optionChoices"></div>
+            <input type="hidden" id="color">
+          </div>
+          <div class="field">
+            <label for="productLine">บรรทัดสินค้า</label>
+            <input id="productLine" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="buildBtn">สร้างออเดอร์</button>
+          <button id="copyBtn">คัดลอก</button>
+          <button id="saveBtn">บันทึกไว้</button>
+        </div>
+
+        <div style="height: 12px"></div>
+        <ul class="errors" id="errors"></ul>
+      </div>
+    </section>
+
+    <section class="panel result-panel">
+      <div class="panel-head">
+        <h2>หน้าออเดอร์</h2>
+        <span class="small" id="copiedText"></span>
+      </div>
+      <div class="body">
+        <div class="page-tabs" id="pageTabs"></div>
+        <textarea id="output" class="output" readonly></textarea>
+        <div class="actions" style="margin-top: 10px">
+          <button class="primary" id="copyCurrentOrderBtn">คัดลอกออเดอร์นี้</button>
+        </div>
+
+        <div style="height: 14px"></div>
+        <div class="panel-head" style="padding: 0 0 10px; border-bottom: 0; box-shadow: none">
+          <h2 id="orderListTitle">รายการในเพจนี้</h2>
+          <button id="clearHistoryBtn" style="min-height: 34px; padding: 6px 10px">ล้างเพจนี้</button>
+        </div>
+        <div class="history" id="history"></div>
+      </div>
+    </section>
+
+    <section class="panel summary-panel">
+      <div class="panel-head">
+        <h2>สรุปยอดแต่ละเพจ</h2>
+        <button id="refreshSummaryBtn" style="min-height: 34px; padding: 6px 10px">รีเฟรช</button>
+      </div>
+      <div class="body">
+        <div class="summary-grid" id="summaryList"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const pages = [
+      { key: "VGSHOP", page: "Vgshop", prefix: "GA", product: "กล้อง A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
+      { key: "CHADA", page: "ชาด้า", prefix: "GA", product: "นาฬิกาMX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล", "เขียว", "เทา"], defaultColor: "ดำ" },
+      { key: "PREMIUM_WATCH", page: "นาฬิกาพรีเมี่ยม", prefix: "GA", product: "นาฬิกาMX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล", "เขียว", "เทา"], defaultColor: "ดำ" },
+      { key: "IT_CENTER", page: "ศูนย์รวมสินค้าไอที", prefix: "GA", product: "M55", cod: {249: 1, 390: 2}, type: "color", colors: ["ชมพู", "ม่วง", "ดำ", "ขาว"], defaultColor: "ดำ" },
+      { key: "LSHOP", page: "Lshop", prefix: "GA", product: "หูฟัง X1", cod: {149: 1, 199: 2}, type: "color", colors: ["ดำ", "ม่วง"], defaultColor: "ดำ" },
+      { key: "ONET", page: "ONET", prefix: "CM", product: "ไฟโซล่าเซลล์", cod: {249: 2, 398: 4, 590: 6}, type: "plain" },
+      { key: "A9_CM", page: "กล้องวงจรปิดจิ๋วไร้สาย", prefix: "CM", product: "กล้อง A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
+      { key: "GIMINI", page: "Gimini Shop", prefix: "CM", product: "เข็มขัดเก็บหน้าท้อง", cod: {149: 2, 199: 4}, type: "size", sizes: ["L", "XL"], defaultColor: "XL" },
+      { key: "CHEAP_LEADING", page: "ศูนย์รวมสินค้าชั้นนำ ราคาถูก", prefix: "CM", product: "ไฟโซล่าเซลล์เหลือง", cod: {249: 1, 390: 2, 590: 3, 780: 4}, type: "plain" },
+      { key: "FACTORY_IMPORT", page: "สินค้านำเข้าโรงงาน", prefix: "CM", product: "ไฟโซล่าเซลล์", cod: {349: 2, 599: 4, 790: 6}, type: "plain" },
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    let activeOrderPageKey = "";
+    let editingOrder = null;
+    const thaiDigitMap = { "๐": "0", "๑": "1", "๒": "2", "๓": "3", "๔": "4", "๕": "5", "๖": "6", "๗": "7", "๘": "8", "๙": "9" };
+
+    const provinceNames = [
+      "กรุงเทพมหานคร", "กรุงเทพ", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี",
+      "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง", "ตราด", "ตาก",
+      "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี", "นราธิวาส",
+      "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี", "พระนครศรีอยุธยา",
+      "พะเยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์", "แพร่", "ภูเก็ต",
+      "มหาสารคาม", "มุกดาหาร", "แม่ฮ่องสอน", "ยโสธร", "ยะลา", "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี",
+      "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ",
+      "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี",
+      "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อ่างทอง", "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี"
+    ];
+
+    function normalizeDigits(text) {
+      return text.replace(/[๐-๙]/g, (d) => thaiDigitMap[d] || d);
+    }
+
+    function currentPage() {
+      return pages.find((p) => p.key === $("page").value) || pages[0];
+    }
+
+    function pageTitle(pageKey) {
+      const page = pages.find((item) => item.key === pageKey) || pages[0];
+      return `${page.prefix} | ${page.page}`;
+    }
+
+    function showView(view) {
+      document.body.classList.toggle("form-mode", view === "form");
+      document.body.classList.toggle("orders-mode", view === "orders");
+      document.body.classList.toggle("summary-mode", view === "summary");
+      $("formViewBtn").classList.toggle("active", view === "form");
+      $("ordersViewBtn").classList.toggle("active", view === "orders");
+      $("summaryViewBtn").classList.toggle("active", view === "summary");
+    }
+
+    function selectedCod() {
+      return $("price").value.trim();
+    }
+
+    function selectedQty() {
+      const page = currentPage();
+      return Number(page.cod[selectedCod()] || 0);
+    }
+
+    function populatePriceOptions(page, selectedValue = "") {
+      $("price").innerHTML = "";
+      Object.entries(page.cod).forEach(([cod, qty]) => {
+        const option = document.createElement("option");
+        option.value = cod;
+        option.textContent = `${cod} = ${qty} ชุด`;
+        $("price").appendChild(option);
+      });
+
+      if (selectedValue && page.cod[selectedValue]) {
+        $("price").value = selectedValue;
+      }
+    }
+
+    function pageOptionValues(page) {
+      if (page.type === "color") return page.colors || [];
+      if (page.type === "size") return page.sizes || ["XL"];
+      return [];
+    }
+
+    function getSelectedOptionText() {
+      return $("color").value.trim();
+    }
+
+    function setSelectedOptionText(value) {
+      const values = String(value || "")
+        .split(/[,/ ]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      [...$("optionChoices").querySelectorAll("input")].forEach((input) => {
+        input.checked = values.includes(input.value);
+      });
+
+      if (!values.length) {
+        const first = $("optionChoices").querySelector("input");
+        if (first) first.checked = true;
+      }
+
+      syncOptionValue();
+    }
+
+    function syncOptionValue() {
+      const selected = [...$("optionChoices").querySelectorAll("input:checked")].map((input) => input.value);
+      $("color").value = selected.join(",");
+      updateProductLine();
+      validateOnly();
+    }
+
+    function populateOptionChoices(page, selectedValue = "") {
+      const values = pageOptionValues(page);
+      $("optionChoices").innerHTML = "";
+      $("optionField").classList.toggle("hidden", !values.length);
+
+      if (!values.length) {
+        $("color").value = "";
+        return;
+      }
+
+      $("optionLabel").textContent = page.type === "size" ? "ไซซ์" : "สี";
+      const inputType = page.type === "size" ? "radio" : "checkbox";
+      const name = page.type === "size" ? "sizeChoice" : `colorChoice-${page.key}`;
+
+      values.forEach((value) => {
+        const label = document.createElement("label");
+        label.className = "choice";
+        label.innerHTML = `<input type="${inputType}" name="${name}" value="${value}"><span>${value}</span>`;
+        $("optionChoices").appendChild(label);
+      });
+
+      setSelectedOptionText(selectedValue || page.defaultColor || values[0]);
+    }
+
+    function setStatus(type, message) {
+      $("status").className = `status ${type || ""}`;
+      $("status").innerHTML = `<span class="dot"></span><span>${message}</span>`;
+    }
+
+    function setErrors(errors) {
+      $("errors").innerHTML = "";
+      errors.forEach((err) => {
+        const li = document.createElement("li");
+        li.textContent = err;
+        $("errors").appendChild(li);
+      });
+    }
+
+    function cleanAddressLine(line) {
+      let value = normalizeDigits(line.trim());
+      value = value.replace(/^[^\d]{2,80}(?=\d)/g, "");
+      value = value.replace(/\b0[689][\d\-\s().]{7,20}/g, "");
+      value = value.replace(/(?:โทร|เบอร์|เบอร์โทร|โทรศัพท์)\s*[:：.]?\s*$/g, "");
+      value = value.replace(/\s*(เก็บเงินปลายทาง|ชำระเงินปลายทาง|ปลายทาง)\s*$/g, "");
+      value = value.replace(/^ชื่อ\s*[-/]?\s*ที่อยู่จัดส่ง\s*[:：]?\s*/g, "");
+      value = value.replace(/^ชื่อ\s*[-/]?\s*ที่อยู่\s*[:：]?\s*/g, "");
+      value = value.replace(/^ที่อยู่\s*[:：]?\s*/g, "");
+      value = value.replace(/^จัดส่ง(?:ไป)?ที่\s*/g, "");
+      value = value.replace(/^ชื่อ\s+.*?(?=\d)/g, "");
+      value = value.replace(/(?<=\d)ม(?=\d)/g, " ม.");
+      value = value.replace(/(?<=\d)ต\s*/g, " ต.");
+      value = value.replace(/ต(?=ใน)/g, " ต.");
+      value = value.replace(/อ(?=เมื)/g, " อ.");
+      provinceNames.forEach((province) => {
+        if (province !== "กรุงเทพ" && province !== "กรุงเทพมหานคร") {
+          value = value.replace(new RegExp(`จ(?=${province})`, "g"), " จ.");
+        }
+      });
+      value = value.replace(/(^|\s)ต\s+/g, "$1ต.");
+      value = value.replace(/(^|\s)อ\s+/g, "$1อ.");
+      value = value.replace(/(^|\s)จ\s+/g, "$1จ.");
+      return value.replace(/\s+/g, " ").trim();
+    }
+
+    function addressScore(line) {
+      if (!line) return 0;
+      const bad = ["โปร", "แถม", "ส่งฟรี", "ค่าส่ง", "ขอบคุณ", "คำสั่งซื้อ", "รับทราบ", "แอดมิน", "สีไหนดี", "รับสี", "มีสี", "ชุดเลย"];
+      if (bad.some((word) => line.includes(word))) return 0;
+
+      let score = 0;
+      if (/\d/.test(line)) score += 1;
+      if (/\b\d{5}\b/.test(line)) score += 2;
+      ["บ้านเลขที่", "เลขที่", "หมู่", "ม.", "ซอย", "ถนน", "ต.", "ตำบล", "อ.", "อำเภอ", "จ.", "จังหวัด", "เขต", "แขวง"].forEach((word) => {
+        if (line.includes(word)) score += 2;
+      });
+      if (provinceNames.some((p) => line.includes(p))) score += 3;
+      return score;
+    }
+
+    function extractPhone(text) {
+      const normalized = normalizeDigits(text);
+      const matches = normalized.match(/0[689][\d\-\s().]{7,20}/g) || [];
+      for (const match of matches) {
+        const digits = match.replace(/\D/g, "");
+        if (digits.length === 10) return digits;
+      }
+      return "";
+    }
+
+    function extractCod(text) {
+      const normalized = normalizeDigits(text);
+      const orderMatch = normalized.match(/(?:คำสั่งซื้อ|COD|ยอดรวม|ยอด)\D{0,20}(\d{3,4})/i);
+      if (orderMatch) return orderMatch[1];
+      const moneyMatches = [...normalized.matchAll(/฿\s*(\d{3,4})|\b(\d{3,4})\s*บาท/g)];
+      if (moneyMatches.length) return moneyMatches[moneyMatches.length - 1][1] || moneyMatches[moneyMatches.length - 1][2];
+      return "";
+    }
+
+    function extractName(text) {
+      const lines = normalizeDigits(text).split(/\n+/).map((line) => line.trim()).filter(Boolean);
+      const nameLine = lines.find((line) => /^(ชื่อ|คุณ|นาย|นาง|น\.ส\.)/.test(line) && !/ที่อยู่|เบอร์|โทร/.test(line));
+      if (nameLine) {
+        return nameLine
+          .replace(/^ชื่อ\s*[:：]?\s*/g, "")
+          .replace(/^(คุณ|นาย|นาง|นางสาว|น\.ส\.)\s*/g, "")
+          .trim();
+      }
+
+      for (const line of lines) {
+        const cleaned = line
+          .replace(/\b0[689][\d\-\s().]{7,20}/g, "")
+          .replace(/\s*(เก็บเงินปลายทาง|ชำระเงินปลายทาง|ปลายทาง)\s*$/g, "")
+          .trim();
+        if (/^(บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(cleaned)) {
+          continue;
+        }
+        const match = cleaned.match(/^([ก-ฮะ-์A-Za-z.'\s]{2,80}?)(?=\d)/);
+        if (match) {
+          return match[1].replace(/\s+/g, " ").trim();
+        }
+      }
+
+      return "";
+    }
+
+    function extractAddress(text) {
+      const lines = normalizeDigits(text).split(/\n+/).map((line) => line.trim()).filter(Boolean);
+      let best = "";
+      let bestScore = 0;
+
+      for (let i = 0; i < lines.length; i += 1) {
+        const first = cleanAddressLine(lines[i]);
+        if (!first || addressScore(first) <= 0) continue;
+
+        const startLooksAddress = /(^\d+|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(first);
+        if (!startLooksAddress) continue;
+
+        const parts = [first];
+        for (let j = i + 1; j < Math.min(lines.length, i + 6); j += 1) {
+          const raw = lines[j];
+          const clean = cleanAddressLine(raw);
+          if (!clean) continue;
+          if (/0[689][\d\-\s().]{7,20}/.test(raw)) continue;
+          if (/รับสี|มีสี|ขอชื่อ|แจ้งชื่อ|คำสั่งซื้อ|ยอดรวม|ขอบคุณ|ส่งโดย|ปิด|close/.test(raw)) break;
+          if (addressScore(clean) <= 0 && !/\b\d{5}\b/.test(clean)) break;
+          parts.push(clean);
+        }
+
+        const candidate = parts.join(" ");
+        const score = addressScore(candidate) + candidate.length / 100;
+        if (score > bestScore) {
+          best = candidate;
+          bestScore = score;
+        }
+      }
+
+      return best;
+    }
+
+    function extractColor(text, page) {
+      const normalized = normalizeDigits(text).toLowerCase();
+      if (page.type === "size") {
+        if (/\bxl\b|ไซซ์\s*xl|ไซต์\s*xl|ขนาด\s*xl/i.test(normalized)) return "XL";
+        if (/\bl\b|ไซซ์\s*l|ไซต์\s*l|ขนาด\s*l/i.test(normalized)) return "L";
+        return "XL";
+      }
+
+      const colorNames = page.colors || [];
+      const found = [];
+      colorNames.forEach((color) => {
+        const pos = normalized.indexOf(color);
+        if (pos !== -1) found.push({ color, pos });
+      });
+      found.sort((a, b) => a.pos - b.pos);
+      const unique = [...new Set(found.map((item) => item.color))];
+      return unique.join(",") || page.defaultColor || "";
+    }
+
+    function colorProductText(page, qty, colorText) {
+      if (page.type === "plain") return `${page.product} ${qty}`;
+      if (page.type === "size") return `${page.product} ${colorText || "XL"}${qty}`;
+
+      let colors = (colorText || page.defaultColor || "ดำ")
+        .split(/[,/ ]+/)
+        .map((color) => color.trim())
+        .filter(Boolean);
+      if (!colors.length) colors.push(page.defaultColor || "ดำ");
+      if (colors.length > qty) colors = colors.slice(0, qty);
+
+      const base = Math.floor(qty / colors.length);
+      let rest = qty % colors.length;
+      return `${page.product} ${colors.map((color) => {
+        const amount = base + (rest > 0 ? 1 : 0);
+        rest -= 1;
+        return `${color}${amount}*`;
+      }).join("")}`.replace(/\*$/, "");
+    }
+
+    function fillFromRaw() {
+      const raw = $("raw").value;
+      const page = currentPage();
+      const phone = extractPhone(raw);
+      const cod = extractCod(raw);
+      const name = extractName(raw);
+      const address = extractAddress(raw);
+      const color = extractColor(raw, page);
+
+      if (phone) $("phone").value = phone;
+      if (cod && page.cod[cod]) $("price").value = cod;
+      if (name) {
+        $("customerName").value = name;
+      }
+      if (address) $("address").value = address;
+      if (color) setSelectedOptionText(color);
+      updateProductLine();
+      validateOnly();
+    }
+
+    function updateProductLine() {
+      const page = currentPage();
+      const qty = selectedQty();
+      const color = $("color").value.trim();
+      $("productLine").value = qty ? colorProductText(page, qty, color) : page.product;
+    }
+
+    function validateOnly() {
+      const errors = [];
+      const page = currentPage();
+      const cod = selectedCod();
+      const qty = selectedQty();
+      const address = $("address").value.trim();
+      const phone = $("phone").value.trim();
+
+      if (!$("customerName").value.trim()) errors.push("ยังไม่มีชื่อลูกค้า");
+      if (!/^0[689]\d{8}$/.test(phone)) errors.push("เบอร์โทรต้องเป็นมือถือไทย 10 หลัก");
+      if (!cod) errors.push("ยังไม่ได้เลือกราคา");
+      if (cod && !page.cod[cod]) errors.push(`COD${cod} ไม่อยู่ในราคาของเพจนี้`);
+      if (!qty) errors.push("ยังไม่มีจำนวนสินค้า");
+      if (!address) errors.push("ยังไม่มีที่อยู่");
+      if (address && !/\d/.test(address)) errors.push("ที่อยู่ไม่มีเลขบ้าน/ตัวเลข");
+      if (address && !/(จ\.|จังหวัด|กรุงเทพ|กทม|สมุทร|นคร|บุรี|ธานี|ภูเก็ต|สงขลา|ระยอง|ชลบุรี)/.test(address)) errors.push("ที่อยู่ยังไม่เห็นจังหวัดชัดเจน");
+      if (page.type === "color" && !$("color").value.trim()) errors.push("สินค้านี้ต้องมีสี");
+      if (page.type === "color" && $("color").value.split(",").filter(Boolean).length > qty) errors.push("เลือกสีเกินจำนวนสินค้า");
+
+      setErrors(errors);
+      setStatus(errors.length ? "warn" : "ok", errors.length ? `ต้องเช็ค ${errors.length} จุด` : "ข้อมูลพร้อมคัดลอก");
+      return errors;
+    }
+
+    function buildOrder() {
+      updateProductLine();
+      const errors = validateOnly();
+      const text = `${$("prefix").value}${$("orderNo").value}${$("customerName").value.trim()}
+T.${$("phone").value.trim()}
+
+FB ${$("fbName").value.trim() || $("customerName").value.trim()}
+${$("address").value.trim()}
+COD${selectedCod()}
+
+***${$("productLine").value.trim()}*`;
+      $("output").value = text;
+      return { text, errors };
+    }
+
+    function getFormSnapshot() {
+      return {
+        pageKey: currentPage().key,
+        price: selectedCod(),
+        prefix: $("prefix").value,
+        orderNo: $("orderNo").value,
+        raw: $("raw").value,
+        customerName: $("customerName").value,
+        fbName: $("fbName").value,
+        phone: $("phone").value,
+        address: $("address").value,
+        color: $("color").value,
+        productLine: $("productLine").value
+      };
+    }
+
+    function applyFormSnapshot(item) {
+      const data = item.form || parseOrderText(item.text, item.pageKey);
+      $("page").value = data.pageKey || item.pageKey || currentPage().key;
+      $("page").dispatchEvent(new Event("change"));
+      if (data.price) $("price").value = data.price;
+      $("prefix").value = data.prefix || "";
+      $("orderNo").value = data.orderNo || "";
+      $("raw").value = data.raw || "";
+      $("customerName").value = data.customerName || "";
+      $("fbName").value = data.fbName || "";
+      $("phone").value = data.phone || "";
+      $("address").value = data.address || "";
+      setSelectedOptionText(data.color || "");
+      $("productLine").value = data.productLine || "";
+      editingOrder = { id: item.id, pageKey: item.pageKey || data.pageKey };
+      validateOnly();
+      showView("form");
+    }
+
+    function parseOrderText(text, pageKey) {
+      const lines = text.split(/\n/);
+      const first = lines[0] || "";
+      const prefixMatch = first.match(/^([A-Z]+)(\d+)(.*)$/);
+      const codMatch = text.match(/COD(\d+)/);
+      const productMatch = text.match(/\*\*\*(.*)\*$/m);
+      const fbLine = lines.find((line) => line.startsWith("FB ")) || "";
+      const phoneLine = lines.find((line) => line.startsWith("T.")) || "";
+      const codIndex = lines.findIndex((line) => line.startsWith("COD"));
+      const fbIndex = lines.findIndex((line) => line.startsWith("FB "));
+      return {
+        pageKey,
+        price: codMatch ? codMatch[1] : "",
+        prefix: prefixMatch ? prefixMatch[1] : "",
+        orderNo: prefixMatch ? prefixMatch[2] : "",
+        customerName: prefixMatch ? prefixMatch[3] : "",
+        fbName: fbLine.replace(/^FB\s*/, ""),
+        phone: phoneLine.replace(/^T\./, ""),
+        address: fbIndex !== -1 && codIndex !== -1 ? lines.slice(fbIndex + 1, codIndex).join("\n").trim() : "",
+        productLine: productMatch ? productMatch[1].replace(/\*$/, "") : ""
+      };
+    }
+
+    function readOrderStore() {
+      return JSON.parse(localStorage.getItem("ordersByPage") || "{}");
+    }
+
+    function writeOrderStore(store) {
+      localStorage.setItem("ordersByPage", JSON.stringify(store));
+    }
+
+    function saveOrderToCurrentPage(text, errors) {
+      const page = currentPage();
+      const store = readOrderStore();
+      const item = {
+        id: editingOrder ? editingOrder.id : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        text,
+        errors,
+        form: getFormSnapshot(),
+        pageKey: page.key,
+        pageName: page.page,
+        title: `${$("prefix").value}${$("orderNo").value} ${$("customerName").value || "ไม่ระบุชื่อ"}`,
+        time: new Date().toLocaleString("th-TH")
+      };
+
+      if (editingOrder && store[editingOrder.pageKey]) {
+        store[editingOrder.pageKey] = store[editingOrder.pageKey].filter((order) => order.id !== editingOrder.id);
+      }
+
+      const list = store[page.key] || [];
+      list.unshift(item);
+      store[page.key] = list.slice(0, 80);
+      writeOrderStore(store);
+      activeOrderPageKey = page.key;
+      editingOrder = null;
+      renderPageTabs();
+      renderHistory();
+      renderSummary();
+    }
+
+    function createOrderAndOpenPage() {
+      const shouldAdvance = !editingOrder;
+      const { text, errors } = buildOrder();
+      saveOrderToCurrentPage(text, errors);
+      if (shouldAdvance) {
+        $("orderNo").value = String((Number($("orderNo").value || 0) || 0) + 1);
+      }
+      clearFormFields();
+      showView("form");
+    }
+
+    async function copyOutput() {
+      const { text } = buildOrder();
+      await copyText(text);
+      $("copiedText").textContent = "คัดลอกแล้ว";
+      setTimeout(() => $("copiedText").textContent = "", 1600);
+    }
+
+    async function copyCurrentOrder() {
+      const text = $("output").value.trim();
+      if (!text) return;
+      await copyText(text);
+      $("copiedText").textContent = "คัดลอกออเดอร์นี้แล้ว";
+      setTimeout(() => $("copiedText").textContent = "", 1600);
+    }
+
+    function clearFormFields(clearOutput = false) {
+      ["raw", "customerName", "fbName", "phone", "address"].forEach((id) => $(id).value = "");
+      if (clearOutput) $("output").value = "";
+      setSelectedOptionText(currentPage().type === "size" ? "XL" : (currentPage().defaultColor || ""));
+      updateProductLine();
+      validateOnly();
+    }
+
+    async function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+
+      const temp = document.createElement("textarea");
+      temp.value = text;
+      temp.style.position = "fixed";
+      temp.style.left = "-9999px";
+      temp.style.top = "0";
+      document.body.appendChild(temp);
+      temp.focus();
+      temp.select();
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+    }
+
+    function saveHistory() {
+      const { text } = buildOrder();
+      saveOrderToCurrentPage(text, validateOnly());
+      showView("orders");
+    }
+
+    function renderPageTabs() {
+      const store = readOrderStore();
+      $("pageTabs").innerHTML = "";
+
+      pages.forEach((page) => {
+        const count = (store[page.key] || []).length;
+        const button = document.createElement("button");
+        button.className = `page-tab ${page.key === activeOrderPageKey ? "active" : ""}`;
+        button.innerHTML = `${page.prefix} ${page.page}<span class="order-count">${count}</span>`;
+        button.addEventListener("click", () => {
+          activeOrderPageKey = page.key;
+          renderPageTabs();
+          renderHistory();
+        });
+        $("pageTabs").appendChild(button);
+      });
+    }
+
+    function renderHistory() {
+      const store = readOrderStore();
+      if (!activeOrderPageKey) activeOrderPageKey = currentPage().key;
+      const history = store[activeOrderPageKey] || [];
+      $("history").innerHTML = "";
+      $("orderListTitle").textContent = `รายการในเพจ ${pageTitle(activeOrderPageKey)}`;
+
+      if (!history.length) {
+        $("output").value = "";
+        const empty = document.createElement("div");
+        empty.className = "small";
+        empty.textContent = "ยังไม่มีออเดอร์ในเพจนี้";
+        $("history").appendChild(empty);
+        return;
+      }
+
+      $("output").value = history[0].text;
+      history.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        const status = item.errors && item.errors.length ? `ต้องเช็ค ${item.errors.length} จุด` : "พร้อมใช้";
+        div.innerHTML = `
+          <div class="history-title">${item.title} <span class="small">(${status})</span></div>
+          <div class="history-text">${item.time} - ${item.text.replace(/\n/g, " ")}</div>
+          <div class="actions" style="margin-top: 8px">
+            <button class="edit-order-btn" type="button">แก้ไข</button>
+          </div>
+        `;
+        div.querySelector(".edit-order-btn").addEventListener("click", (event) => {
+          event.stopPropagation();
+          applyFormSnapshot(item);
+        });
+        div.addEventListener("click", () => {
+          $("output").value = item.text;
+          copyText(item.text);
+          $("copiedText").textContent = "คัดลอกจากประวัติแล้ว";
+          setTimeout(() => $("copiedText").textContent = "", 1600);
+        });
+        $("history").appendChild(div);
+      });
+    }
+
+    function renderSummary() {
+      const store = readOrderStore();
+      $("summaryList").innerHTML = "";
+
+      pages.forEach((page) => {
+        const orders = store[page.key] || [];
+        const codCounts = {};
+        const total = orders.reduce((sum, item) => {
+          const match = item.text.match(/COD(\d+)/);
+          if (!match) return sum;
+          const cod = match[1];
+          codCounts[cod] = (codCounts[cod] || 0) + 1;
+          return sum + Number(cod);
+        }, 0);
+        const detail = Object.entries(codCounts)
+          .sort((a, b) => Number(a[0]) - Number(b[0]))
+          .map(([cod, count]) => `${cod} x ${count} = ${(Number(cod) * count).toLocaleString("th-TH")}`)
+          .join("<br>");
+
+        const card = document.createElement("div");
+        card.className = "summary-card";
+        card.innerHTML = `
+          <strong>${page.prefix} | ${page.page}</strong>
+          <div class="summary-total">${total.toLocaleString("th-TH")}</div>
+          <div class="small">${orders.length} ออเดอร์</div>
+          <div class="small" style="margin-top: 8px">${detail || "ยังไม่มีรายการ"}</div>
+        `;
+        $("summaryList").appendChild(card);
+      });
+    }
+
+    function init() {
+      pages.forEach((page) => {
+        const option = document.createElement("option");
+        option.value = page.key;
+        option.textContent = `${page.prefix} | ${page.page} | ${page.product}`;
+        $("page").appendChild(option);
+      });
+
+      $("page").addEventListener("change", () => {
+        const page = currentPage();
+        $("prefix").value = page.prefix;
+        populatePriceOptions(page);
+        populateOptionChoices(page);
+        updateProductLine();
+        validateOnly();
+      });
+
+      $("price").addEventListener("change", () => {
+        updateProductLine();
+        validateOnly();
+      });
+
+      $("optionChoices").addEventListener("change", syncOptionValue);
+
+      ["customerName", "fbName", "phone", "address", "prefix", "orderNo"].forEach((id) => {
+        $(id).addEventListener("input", () => {
+          updateProductLine();
+          validateOnly();
+        });
+      });
+
+      $("formViewBtn").addEventListener("click", () => showView("form"));
+      $("ordersViewBtn").addEventListener("click", () => {
+        renderPageTabs();
+        renderHistory();
+        showView("orders");
+      });
+      $("summaryViewBtn").addEventListener("click", () => {
+        renderSummary();
+        showView("summary");
+      });
+
+      $("parseBtn").addEventListener("click", fillFromRaw);
+      $("buildBtn").addEventListener("click", createOrderAndOpenPage);
+      $("copyBtn").addEventListener("click", copyOutput);
+      $("copyCurrentOrderBtn").addEventListener("click", copyCurrentOrder);
+      $("saveBtn").addEventListener("click", saveHistory);
+      $("nextBtn").addEventListener("click", () => {
+        $("orderNo").value = String((Number($("orderNo").value || 0) || 0) + 1);
+        buildOrder();
+      });
+      $("clearBtn").addEventListener("click", () => {
+        clearFormFields(true);
+      });
+      $("clearHistoryBtn").addEventListener("click", () => {
+        const store = readOrderStore();
+        if (activeOrderPageKey) {
+          store[activeOrderPageKey] = [];
+          writeOrderStore(store);
+        }
+        renderPageTabs();
+        renderHistory();
+        renderSummary();
+      });
+      $("refreshSummaryBtn").addEventListener("click", renderSummary);
+
+      $("page").dispatchEvent(new Event("change"));
+      activeOrderPageKey = currentPage().key;
+      renderPageTabs();
+      renderHistory();
+      renderSummary();
+    }
+
+    init();
+  </script>
+</body>
+</html>
