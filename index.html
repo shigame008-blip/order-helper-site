@@ -932,15 +932,18 @@ COD${selectedCod()}
       renderSummary();
     }
 
-    function createOrderAndOpenPage() {
+    async function createOrderAndOpenPage() {
       const shouldAdvance = !editingOrder;
       const { text, errors } = buildOrder();
       saveOrderToCurrentPage(text, errors);
+      await copyText(text);
       if (shouldAdvance) {
         $("orderNo").value = String((Number($("orderNo").value || 0) || 0) + 1);
       }
       clearFormFields();
       showView("form");
+      $("copiedText").textContent = "สร้างออเดอร์และคัดลอกแล้ว";
+      setTimeout(() => $("copiedText").textContent = "", 1600);
     }
 
     async function copyOutput() {
