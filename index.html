@@ -255,6 +255,27 @@
       margin-bottom: 4px;
     }
 
+    .line-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .line-status::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .line-status.sent { color: var(--ok); }
+    .line-status.unsent { color: var(--danger); }
+
     .history-text {
       color: var(--muted);
       font-size: 12px;
@@ -521,7 +542,7 @@
       { key: "CHADA", page: "ชาด้า", prefix: "GA", product: "นาฬิกาMX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล", "เขียว", "เทา"], defaultColor: "ดำ" },
       { key: "PREMIUM_WATCH", page: "นาฬิกาพรีเมี่ยม", prefix: "GA", product: "นาฬิกาMX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล", "เขียว", "เทา"], defaultColor: "ดำ" },
       { key: "IT_CENTER", page: "ศูนย์รวมสินค้าไอที", prefix: "GA", product: "M55", cod: {249: 1, 390: 2}, type: "color", colors: ["ชมพู", "ม่วง", "ดำ", "ขาว"], defaultColor: "ดำ" },
-      { key: "LSHOP", page: "Lshop", prefix: "GA", product: "หูฟัง X1", cod: {149: 1, 199: 2}, type: "color", colors: ["ดำ", "ม่วง"], defaultColor: "ดำ" },
+      { key: "LSHOP", page: "Lshop", prefix: "GA", product: "หูฟัง X1", cod: {149: 1, 199: 2}, type: "color", colors: ["ดำ", "ม่วง", "ฟ้า", "ครีม"], defaultColor: "ดำ" },
       { key: "KSPL", page: "KSPL", prefix: "VT", product: "ไฟฉายสปอร์ตไลท์", cod: {158: 1, 258: 2, 456: 4}, type: "plain" },
       { key: "ONET", page: "ONET", prefix: "CM", product: "ไฟโซล่าเซลล์", cod: {249: 2, 398: 4, 590: 6}, type: "plain" },
       { key: "A9_CM", page: "กล้องวงจรปิดจิ๋วไร้สาย", prefix: "CM", product: "กล้อง A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
@@ -1069,6 +1090,14 @@ COD${selectedCod()}
       };
     }
 
+    function updateEditModeUi() {
+      const isEditing = Boolean(editingOrder);
+      $("buildBtn").style.display = isEditing ? "none" : "";
+      $("copyBtn").style.display = isEditing ? "none" : "";
+      $("nextBtn").style.display = isEditing ? "none" : "";
+      $("saveBtn").textContent = isEditing ? "บันทึกออเดอร์ไว้" : "บันทึกไว้";
+    }
+
     function applyFormSnapshot(item) {
       const data = item.form || parseOrderText(item.text, item.pageKey);
       $("page").value = data.pageKey || item.pageKey || currentPage().key;
@@ -1084,6 +1113,7 @@ COD${selectedCod()}
       setSelectedOptionText(data.color || "");
       $("productLine").value = data.productLine || "";
       editingOrder = { id: item.id, pageKey: item.pageKey || data.pageKey };
+      updateEditModeUi();
       validateOnly();
       showView("form");
     }
@@ -1119,9 +1149,30 @@ COD${selectedCod()}
       localStorage.setItem("ordersByPage", JSON.stringify(store));
     }
 
+    function nextOrderNoForPage(pageKey) {
+      const orders = readOrderStore()[pageKey] || [];
+      let maxNo = 0;
+      orders.forEach((order) => {
+        const formNo = Number(order.form && order.form.orderNo);
+        if (Number.isFinite(formNo) && formNo > maxNo) {
+          maxNo = formNo;
+          return;
+        }
+        const parsed = parseOrderText(order.text || order.title || "", pageKey);
+        const parsedNo = Number(parsed.orderNo);
+        if (Number.isFinite(parsedNo) && parsedNo > maxNo) {
+          maxNo = parsedNo;
+        }
+      });
+      return String(maxNo + 1);
+    }
+
     function saveOrderToCurrentPage(text, errors) {
       const page = currentPage();
       const store = readOrderStore();
+      const originalList = editingOrder ? (store[editingOrder.pageKey] || []) : [];
+      const originalIndex = editingOrder ? originalList.findIndex((order) => order.id === editingOrder.id) : -1;
+      const originalItem = originalIndex >= 0 ? originalList[originalIndex] : null;
       const item = {
         id: editingOrder ? editingOrder.id : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         text,
@@ -1130,19 +1181,27 @@ COD${selectedCod()}
         pageKey: page.key,
         pageName: page.page,
         title: `${$("prefix").value}${$("orderNo").value} ${$("customerName").value || "ไม่ระบุชื่อ"}`,
-        time: new Date().toLocaleString("th-TH")
+        time: originalItem ? originalItem.time : new Date().toLocaleString("th-TH"),
+        sentAt: originalItem ? originalItem.sentAt : undefined
       };
 
-      if (editingOrder && store[editingOrder.pageKey]) {
-        store[editingOrder.pageKey] = store[editingOrder.pageKey].filter((order) => order.id !== editingOrder.id);
+      if (editingOrder && originalItem && editingOrder.pageKey === page.key) {
+        const list = store[page.key] || [];
+        list[originalIndex] = item;
+        store[page.key] = list;
+      } else {
+        if (editingOrder && store[editingOrder.pageKey]) {
+          store[editingOrder.pageKey] = store[editingOrder.pageKey].filter((order) => order.id !== editingOrder.id);
+        }
+        const list = store[page.key] || [];
+        list.unshift(item);
+        store[page.key] = list.slice(0, 80);
       }
 
-      const list = store[page.key] || [];
-      list.unshift(item);
-      store[page.key] = list.slice(0, 80);
       writeOrderStore(store);
       activeOrderPageKey = page.key;
       editingOrder = null;
+      updateEditModeUi();
       renderPageTabs();
       renderHistory();
       renderSummary();
@@ -1186,6 +1245,7 @@ COD${selectedCod()}
     function clearFormFields(clearOutput = false) {
       ["raw", "customerName", "fbName", "phone", "address"].forEach((id) => $(id).value = "");
       if (clearOutput) $("output").value = "";
+      if (!editingOrder) $("orderNo").value = nextOrderNoForPage(currentPage().key);
       setSelectedOptionText(currentPage().type === "size" ? "XL" : (currentPage().defaultColor || ""));
       updateProductLine();
       validateOnly();
@@ -1211,8 +1271,16 @@ COD${selectedCod()}
 
     function saveHistory() {
       const { text } = buildOrder();
+      const wasEditing = Boolean(editingOrder);
       saveOrderToCurrentPage(text, validateOnly());
-      showView("orders");
+      if (wasEditing) {
+        clearFormFields(true);
+        showView("form");
+        $("copiedText").textContent = "บันทึกออเดอร์ที่แก้ไขแล้ว";
+        setTimeout(() => $("copiedText").textContent = "", 1600);
+      } else {
+        showView("orders");
+      }
     }
 
     function renderPageTabs() {
@@ -1254,8 +1322,10 @@ COD${selectedCod()}
         const div = document.createElement("div");
         div.className = "history-item";
         const status = item.errors && item.errors.length ? `ต้องเช็ค ${item.errors.length} จุด` : "พร้อมใช้";
+        const lineStatusClass = item.sentAt ? "sent" : "unsent";
+        const lineStatusText = item.sentAt ? "ส่ง LINE แล้ว" : "ยังไม่ส่ง LINE";
         div.innerHTML = `
-          <div class="history-title">${item.title} <span class="small">(${status})</span></div>
+          <div class="history-title">${item.title} <span class="small">(${status})</span><span class="line-status ${lineStatusClass}">${lineStatusText}</span></div>
           <div class="history-text">${item.time} - ${item.text.replace(/\n/g, " ")}</div>
           <div class="actions" style="margin-top: 8px">
             <button class="edit-order-btn" type="button">แก้ไข</button>
@@ -1324,6 +1394,7 @@ COD${selectedCod()}
       $("page").addEventListener("change", () => {
         const page = currentPage();
         $("prefix").value = page.prefix;
+        $("orderNo").value = nextOrderNoForPage(page.key);
         populatePriceOptions(page);
         populateOptionChoices(page);
         updateProductLine();
@@ -1365,6 +1436,8 @@ COD${selectedCod()}
         buildOrder();
       });
       $("clearBtn").addEventListener("click", () => {
+        editingOrder = null;
+        updateEditModeUi();
         clearFormFields(true);
       });
       $("clearHistoryBtn").addEventListener("click", () => {
@@ -1381,6 +1454,7 @@ COD${selectedCod()}
       $("changeGroupBtn").addEventListener("click", showGroupGate);
 
       $("page").dispatchEvent(new Event("change"));
+      updateEditModeUi();
       activeOrderPageKey = currentPage().key;
       renderPageTabs();
       renderHistory();
