@@ -317,6 +317,49 @@
       display: none;
     }
 
+    .admin-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      background: #eef2f7;
+      padding: 24px;
+    }
+
+    .admin-card {
+      width: min(640px, 100%);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, .12);
+      padding: 24px;
+    }
+
+    .admin-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .admin-option {
+      text-align: left;
+      min-height: 108px;
+      padding: 16px;
+    }
+
+    .admin-option strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 22px;
+    }
+
+    body.admin-locked .topbar,
+    body.admin-locked .app {
+      display: none;
+    }
+
     @media (max-width: 1150px) {
       .app {
         grid-template-columns: 1fr;
@@ -324,7 +367,15 @@
     }
   </style>
 </head>
-<body class="form-mode">
+<body class="form-mode admin-locked">
+  <section class="admin-gate" id="adminGate">
+    <div class="admin-card">
+      <h1>เลือกกลุ่มเพจ</h1>
+      <p class="small">เลือก GA หรือ CM เพื่อแสดงเฉพาะเพจในกลุ่มนั้น</p>
+      <div class="admin-options" id="adminOptions"></div>
+    </div>
+  </section>
+
   <nav class="topbar">
     <div class="view-buttons">
       <button id="formViewBtn" class="active">หน้ากรอกออเดอร์</button>
@@ -332,6 +383,7 @@
       <button id="summaryViewBtn">หน้าสรุปยอด</button>
     </div>
     <span class="small">แยกออเดอร์ตามเพจ</span>
+    <button id="changeGroupBtn" type="button">เปลี่ยนกลุ่ม</button>
   </nav>
 
   <main class="app">
@@ -480,6 +532,11 @@
     const $ = (id) => document.getElementById(id);
     let activeOrderPageKey = "";
     let editingOrder = null;
+    let activeGroup = null;
+    const pageGroups = [
+      { key: "GA", name: "GA", description: "แสดงเฉพาะเพจ Prefix GA" },
+      { key: "CM", name: "CM", description: "แสดงเฉพาะเพจ Prefix CM" }
+    ];
     const thaiDigitMap = { "๐": "0", "๑": "1", "๒": "2", "๓": "3", "๔": "4", "๕": "5", "๖": "6", "๗": "7", "๘": "8", "๙": "9" };
 
     const provinceNames = [
@@ -559,8 +616,71 @@
       return value;
     }
 
+    function normalizeAddressText(text) {
+      let value = normalizeDigits(String(text || ""));
+      value = value.replace(/(^|\s)(?:ตำบล|ต\.?|ต)\s*([ก-ฮะ-์]{2,})/g, "$1ต.$2");
+      value = value.replace(/(^|\s)(?:อำเภอ|อ\.?|อ)\s*([ก-ฮะ-์]{2,})/g, "$1อ.$2");
+      value = value.replace(/(^|\s)(?:จังหวัด|จ\.?|จ)\s*([ก-ฮะ-์]{2,})/g, "$1จ.$2");
+      value = normalizeProvinceTypos(value);
+      return value.replace(/\s+/g, " ").trim();
+    }
+
     function currentPage() {
       return pages.find((p) => p.key === $("page").value) || pages[0];
+    }
+
+    function visiblePages() {
+      if (!activeGroup) return pages;
+      return pages.filter((page) => page.prefix === activeGroup.key);
+    }
+
+    function renderPageSelect() {
+      $("page").innerHTML = "";
+      visiblePages().forEach((page) => {
+        const option = document.createElement("option");
+        option.value = page.key;
+        option.textContent = `${page.prefix} | ${page.page} | ${page.product}`;
+        $("page").appendChild(option);
+      });
+    }
+
+    function renderGroupOptions() {
+      $("adminOptions").innerHTML = "";
+      pageGroups.forEach((group) => {
+        const button = document.createElement("button");
+        button.className = "admin-option";
+        button.type = "button";
+        button.innerHTML = `<strong>${group.name}</strong><span class="small">${group.description}</span>`;
+        button.addEventListener("click", () => selectGroup(group.key));
+        $("adminOptions").appendChild(button);
+      });
+    }
+
+    function selectGroup(groupKey) {
+      activeGroup = pageGroups.find((group) => group.key === groupKey) || pageGroups[0];
+      localStorage.setItem("activePageGroup", activeGroup.key);
+      document.body.classList.remove("admin-locked");
+      $("adminGate").style.display = "none";
+      const topbarNote = document.querySelector(".topbar .small");
+      if (topbarNote) topbarNote.textContent = `กลุ่มเพจ: ${activeGroup.name}`;
+      renderPageSelect();
+      const firstPage = visiblePages()[0];
+      if (firstPage) {
+        $("page").value = firstPage.key;
+        $("page").dispatchEvent(new Event("change"));
+        activeOrderPageKey = firstPage.key;
+      }
+      renderPageTabs();
+      renderHistory();
+      renderSummary();
+    }
+
+    function showGroupGate() {
+      activeGroup = null;
+      localStorage.removeItem("activePageGroup");
+      document.body.classList.add("admin-locked");
+      $("adminGate").style.display = "grid";
+      renderGroupOptions();
     }
 
     function pageTitle(pageKey) {
@@ -674,8 +794,10 @@
     }
 
     function cleanAddressLine(line) {
-      let value = normalizeDigits(line.trim());
-      value = value.replace(/^[^\d]{2,80}(?=\d)/g, "");
+      let value = normalizeAddressText(line.trim());
+      if (!/(หมู่บ้าน|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(value)) {
+        value = value.replace(/^[^\d]{2,80}(?=\d)/g, "");
+      }
       value = value.replace(/\b0[689][\d\-\s().]{7,20}/g, "");
       value = value.replace(/(?:โทร|เบอร์|เบอร์โทร|โทรศัพท์)\s*[:：.]?\s*$/g, "");
       value = value.replace(/\s*(เก็บเงินปลายทาง|ชำระเงินปลายทาง|ปลายทาง)\s*$/g, "");
@@ -696,7 +818,7 @@
       value = value.replace(/(^|\s)ต\s+/g, "$1ต.");
       value = value.replace(/(^|\s)อ\s+/g, "$1อ.");
       value = value.replace(/(^|\s)จ\s+/g, "$1จ.");
-      value = normalizeProvinceTypos(value);
+      value = normalizeAddressText(value);
       return value.replace(/\s+/g, " ").trim();
     }
 
@@ -791,6 +913,22 @@
         }
       }
 
+      const hasSubdistrict = /(ต\.|ตำบล|แขวง)/.test(best);
+      const hasDistrict = /(อ\.|อำเภอ|เขต)/.test(best);
+      const hasProvince = /(จ\.|จังหวัด|กรุงเทพ|กทม)/.test(best);
+      const needsMoreParts = !hasSubdistrict || !hasDistrict || !hasProvince;
+
+      if (best && needsMoreParts) {
+        const extraParts = lines
+          .map((line) => cleanAddressLine(line))
+          .filter((line) => line && !best.includes(line))
+          .filter((line) => /(ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด|กรุงเทพ|กทม|\b\d{5}\b)/.test(line));
+
+        if (extraParts.length) {
+          return normalizeProvinceTypos([best, ...extraParts].join(" ")).replace(/\s+/g, " ").trim();
+        }
+      }
+
       return best;
     }
 
@@ -865,7 +1003,7 @@
       const page = currentPage();
       const cod = selectedCod();
       const qty = selectedQty();
-      const address = $("address").value.trim();
+      const address = normalizeAddressText($("address").value.trim());
       const phone = $("phone").value.trim();
 
       if (!$("customerName").value.trim()) errors.push("ยังไม่มีชื่อลูกค้า");
@@ -886,7 +1024,7 @@
 
     function buildOrder() {
       updateProductLine();
-      $("address").value = normalizeProvinceTypos($("address").value.trim());
+      $("address").value = normalizeAddressText($("address").value.trim());
       const errors = validateOnly();
       const text = `${$("prefix").value}${$("orderNo").value}${$("customerName").value.trim()}
 T.${$("phone").value.trim()}
@@ -903,7 +1041,7 @@ COD${selectedCod()}
     function blockingOrderErrors() {
       const errors = [];
       const phone = $("phone").value.trim();
-      const address = $("address").value.trim();
+      const address = normalizeAddressText($("address").value.trim());
 
       if (!/^0[689]\d{8}$/.test(phone)) errors.push("เบอร์โทรไม่ถูกต้อง หรือยังไม่มีเบอร์โทร");
       if (!/(ต\.|ตำบล|แขวง)/.test(address)) errors.push("ที่อยู่ยังไม่มีตำบล/แขวง");
@@ -1079,7 +1217,7 @@ COD${selectedCod()}
       const store = readOrderStore();
       $("pageTabs").innerHTML = "";
 
-      pages.forEach((page) => {
+      visiblePages().forEach((page) => {
         const count = (store[page.key] || []).length;
         const button = document.createElement("button");
         button.className = `page-tab ${page.key === activeOrderPageKey ? "active" : ""}`;
@@ -1150,7 +1288,7 @@ COD${selectedCod()}
       const store = readOrderStore();
       $("summaryList").innerHTML = "";
 
-      pages.forEach((page) => {
+      visiblePages().forEach((page) => {
         const orders = store[page.key] || [];
         const codCounts = {};
         const total = orders.reduce((sum, item) => {
@@ -1178,12 +1316,8 @@ COD${selectedCod()}
     }
 
     function init() {
-      pages.forEach((page) => {
-        const option = document.createElement("option");
-        option.value = page.key;
-        option.textContent = `${page.prefix} | ${page.page} | ${page.product}`;
-        $("page").appendChild(option);
-      });
+      renderGroupOptions();
+      renderPageSelect();
 
       $("page").addEventListener("change", () => {
         const page = currentPage();
@@ -1242,12 +1376,18 @@ COD${selectedCod()}
         renderSummary();
       });
       $("refreshSummaryBtn").addEventListener("click", renderSummary);
+      $("changeGroupBtn").addEventListener("click", showGroupGate);
 
       $("page").dispatchEvent(new Event("change"));
       activeOrderPageKey = currentPage().key;
       renderPageTabs();
       renderHistory();
       renderSummary();
+
+      const savedGroup = localStorage.getItem("activePageGroup");
+      if (savedGroup && pageGroups.some((group) => group.key === savedGroup)) {
+        selectGroup(savedGroup);
+      }
     }
 
     init();
