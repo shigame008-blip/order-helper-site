@@ -370,8 +370,8 @@
 <body class="form-mode admin-locked">
   <section class="admin-gate" id="adminGate">
     <div class="admin-card">
-      <h1>เลือกกลุ่มเพจ</h1>
-      <p class="small">เลือก GA หรือ CM เพื่อแสดงเฉพาะเพจในกลุ่มนั้น</p>
+      <h1>เลือกแอดมิน</h1>
+      <p class="small">เลือกชื่อแอดมินเพื่อแสดงเฉพาะเพจที่ดูแล</p>
       <div class="admin-options" id="adminOptions"></div>
     </div>
   </section>
@@ -522,6 +522,7 @@
       { key: "PREMIUM_WATCH", page: "นาฬิกาพรีเมี่ยม", prefix: "GA", product: "นาฬิกาMX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล", "เขียว", "เทา"], defaultColor: "ดำ" },
       { key: "IT_CENTER", page: "ศูนย์รวมสินค้าไอที", prefix: "GA", product: "M55", cod: {249: 1, 390: 2}, type: "color", colors: ["ชมพู", "ม่วง", "ดำ", "ขาว"], defaultColor: "ดำ" },
       { key: "LSHOP", page: "Lshop", prefix: "GA", product: "หูฟัง X1", cod: {149: 1, 199: 2}, type: "color", colors: ["ดำ", "ม่วง"], defaultColor: "ดำ" },
+      { key: "KSPL", page: "KSPL", prefix: "VT", product: "ไฟฉายสปอร์ตไลท์", cod: {158: 1, 258: 2, 456: 4}, type: "plain" },
       { key: "ONET", page: "ONET", prefix: "CM", product: "ไฟโซล่าเซลล์", cod: {249: 2, 398: 4, 590: 6}, type: "plain" },
       { key: "A9_CM", page: "กล้องวงจรปิดจิ๋วไร้สาย", prefix: "CM", product: "กล้อง A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
       { key: "GIMINI", page: "Gimini Shop", prefix: "CM", product: "เข็มขัดเก็บหน้าท้อง", cod: {149: 2, 199: 4}, type: "size", sizes: ["L", "XL"], defaultColor: "XL" },
@@ -534,8 +535,9 @@
     let editingOrder = null;
     let activeGroup = null;
     const pageGroups = [
-      { key: "GA", name: "GA", description: "แสดงเฉพาะเพจ Prefix GA" },
-      { key: "CM", name: "CM", description: "แสดงเฉพาะเพจ Prefix CM" }
+      { key: "GA", name: "แอดมินเกม", description: "แสดงเฉพาะเพจ Prefix GA" },
+      { key: "CM", name: "แอดมินครีม", description: "แสดงเฉพาะเพจ Prefix CM" },
+      { key: "VT", name: "แอดมินวิทย์", description: "แสดงเฉพาะเพจ Prefix VT" }
     ];
     const thaiDigitMap = { "๐": "0", "๑": "1", "๒": "2", "๓": "3", "๔": "4", "๕": "5", "๖": "6", "๗": "7", "๘": "8", "๙": "9" };
 
