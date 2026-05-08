@@ -494,8 +494,69 @@
       "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อ่างทอง", "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี"
     ];
 
+    const canonicalProvinceNames = provinceNames.filter((name) => name !== "กรุงเทพ");
+    const provinceAliases = {
+      "กทม": "กรุงเทพมหานคร",
+      "กรุงเทพ": "กรุงเทพมหานคร",
+      "ชนบุรี": "ชลบุรี",
+      "ชลบรี": "ชลบุรี",
+      "ชลบุร": "ชลบุรี",
+      "นครศรีธรรมราช์": "นครศรีธรรมราช",
+      "สุราษธานี": "สุราษฎร์ธานี",
+      "สุราษฎธานี": "สุราษฎร์ธานี",
+      "อยุธยา": "พระนครศรีอยุธยา"
+    };
+
     function normalizeDigits(text) {
       return text.replace(/[๐-๙]/g, (d) => thaiDigitMap[d] || d);
+    }
+
+    function compactThai(text) {
+      return String(text || "").replace(/จังหวัด|จ\.|[\s.]/g, "");
+    }
+
+    function editDistance(a, b) {
+      const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+      for (let i = 0; i <= a.length; i += 1) dp[i][0] = i;
+      for (let j = 0; j <= b.length; j += 1) dp[0][j] = j;
+      for (let i = 1; i <= a.length; i += 1) {
+        for (let j = 1; j <= b.length; j += 1) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+        }
+      }
+      return dp[a.length][b.length];
+    }
+
+    function closestProvince(input) {
+      const compact = compactThai(input);
+      if (!compact || compact.length < 3) return "";
+      if (provinceAliases[compact]) return provinceAliases[compact];
+      const exact = canonicalProvinceNames.find((name) => compactThai(name) === compact);
+      if (exact) return exact;
+
+      let best = "";
+      let bestDistance = Infinity;
+      canonicalProvinceNames.forEach((name) => {
+        const distance = editDistance(compact, compactThai(name));
+        if (distance < bestDistance) {
+          best = name;
+          bestDistance = distance;
+        }
+      });
+      return bestDistance <= 2 ? best : "";
+    }
+
+    function normalizeProvinceTypos(text) {
+      let value = String(text || "");
+      Object.entries(provinceAliases).forEach(([wrong, correct]) => {
+        value = value.replace(new RegExp(wrong, "g"), correct);
+      });
+      value = value.replace(/(จ\.|จังหวัด)\s*([ก-ฮะ]{3,24})/g, (match, prefix, name) => {
+        const fixed = closestProvince(name);
+        return fixed ? `${prefix}${fixed}` : match;
+      });
+      return value;
     }
 
     function currentPage() {
@@ -635,6 +696,7 @@
       value = value.replace(/(^|\s)ต\s+/g, "$1ต.");
       value = value.replace(/(^|\s)อ\s+/g, "$1อ.");
       value = value.replace(/(^|\s)จ\s+/g, "$1จ.");
+      value = normalizeProvinceTypos(value);
       return value.replace(/\s+/g, " ").trim();
     }
 
@@ -824,6 +886,7 @@
 
     function buildOrder() {
       updateProductLine();
+      $("address").value = normalizeProvinceTypos($("address").value.trim());
       const errors = validateOnly();
       const text = `${$("prefix").value}${$("orderNo").value}${$("customerName").value.trim()}
 T.${$("phone").value.trim()}
@@ -835,6 +898,19 @@ COD${selectedCod()}
 ***${$("productLine").value.trim()}*`;
       $("output").value = text;
       return { text, errors };
+    }
+
+    function blockingOrderErrors() {
+      const errors = [];
+      const phone = $("phone").value.trim();
+      const address = $("address").value.trim();
+
+      if (!/^0[689]\d{8}$/.test(phone)) errors.push("เบอร์โทรไม่ถูกต้อง หรือยังไม่มีเบอร์โทร");
+      if (!/(ต\.|ตำบล|แขวง)/.test(address)) errors.push("ที่อยู่ยังไม่มีตำบล/แขวง");
+      if (!/(อ\.|อำเภอ|เขต)/.test(address)) errors.push("ที่อยู่ยังไม่มีอำเภอ/เขต");
+      if (!/(จ\.|จังหวัด|กรุงเทพ|กทม)/.test(address)) errors.push("ที่อยู่ยังไม่มีจังหวัด/กทม.");
+
+      return errors;
     }
 
     function getFormSnapshot() {
@@ -935,6 +1011,12 @@ COD${selectedCod()}
     async function createOrderAndOpenPage() {
       const shouldAdvance = !editingOrder;
       const { text, errors } = buildOrder();
+      const blockingErrors = blockingOrderErrors();
+      if (blockingErrors.length) {
+        alert(`สร้างออเดอร์ไม่สำเร็จ\n\n${blockingErrors.map((error) => `- ${error}`).join("\n")}`);
+        setErrors([...blockingErrors, ...errors.filter((error) => !blockingErrors.includes(error))]);
+        return;
+      }
       saveOrderToCurrentPage(text, errors);
       await copyText(text);
       if (shouldAdvance) {
@@ -1037,11 +1119,22 @@ COD${selectedCod()}
           <div class="history-text">${item.time} - ${item.text.replace(/\n/g, " ")}</div>
           <div class="actions" style="margin-top: 8px">
             <button class="edit-order-btn" type="button">แก้ไข</button>
+            <button class="delete-order-btn" type="button">ลบ</button>
           </div>
         `;
         div.querySelector(".edit-order-btn").addEventListener("click", (event) => {
           event.stopPropagation();
           applyFormSnapshot(item);
+        });
+        div.querySelector(".delete-order-btn").addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (!confirm(`ลบออเดอร์นี้?\n\n${item.title}`)) return;
+          const latestStore = readOrderStore();
+          latestStore[activeOrderPageKey] = (latestStore[activeOrderPageKey] || []).filter((order) => order.id !== item.id);
+          writeOrderStore(latestStore);
+          renderPageTabs();
+          renderHistory();
+          renderSummary();
         });
         div.addEventListener("click", () => {
           $("output").value = item.text;
