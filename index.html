@@ -646,7 +646,7 @@
       let score = 0;
       if (/\d/.test(line)) score += 1;
       if (/\b\d{5}\b/.test(line)) score += 2;
-      ["บ้านเลขที่", "เลขที่", "หมู่", "ม.", "ซอย", "ถนน", "ต.", "ตำบล", "อ.", "อำเภอ", "จ.", "จังหวัด", "เขต", "แขวง"].forEach((word) => {
+      ["หมู่บ้าน", "บ้านเลขที่", "เลขที่", "หมู่", "ม.", "ซอย", "ถนน", "ต.", "ตำบล", "อ.", "อำเภอ", "จ.", "จังหวัด", "เขต", "แขวง"].forEach((word) => {
         if (line.includes(word)) score += 2;
       });
       if (provinceNames.some((p) => line.includes(p))) score += 3;
@@ -687,13 +687,12 @@
           .replace(/\b0[689][\d\-\s().]{7,20}/g, "")
           .replace(/\s*(เก็บเงินปลายทาง|ชำระเงินปลายทาง|ปลายทาง)\s*$/g, "")
           .trim();
-        if (/^(บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(cleaned)) {
+        if (!cleaned || /\d/.test(cleaned)) continue;
+        if (/^(หมู่บ้าน|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส|อาคาร|หอพัก|ร้าน|ตลาด|โรงงาน)/.test(cleaned)) {
           continue;
         }
-        const match = cleaned.match(/^([ก-ฮะ-์A-Za-z.'\s]{2,80}?)(?=\d)/);
-        if (match) {
-          return match[1].replace(/\s+/g, " ").trim();
-        }
+        if (/ที่อยู่|เบอร์|โทร|รับสี|สี|โปร|ชุด|COD|ปลายทาง|ส่ง|ราคา|บาท/.test(cleaned)) continue;
+        if (/^[ก-ฮะ-์A-Za-z.'\s]{2,60}$/.test(cleaned)) return cleaned.replace(/\s+/g, " ").trim();
       }
 
       return "";
@@ -708,7 +707,7 @@
         const first = cleanAddressLine(lines[i]);
         if (!first || addressScore(first) <= 0) continue;
 
-        const startLooksAddress = /(^\d+|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(first);
+        const startLooksAddress = /(^\d+|หมู่บ้าน|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(first);
         if (!startLooksAddress) continue;
 
         const parts = [first];
@@ -933,15 +932,18 @@ COD${selectedCod()}
       renderSummary();
     }
 
-    function createOrderAndOpenPage() {
+    async function createOrderAndOpenPage() {
       const shouldAdvance = !editingOrder;
       const { text, errors } = buildOrder();
       saveOrderToCurrentPage(text, errors);
+      await copyText(text);
       if (shouldAdvance) {
         $("orderNo").value = String((Number($("orderNo").value || 0) || 0) + 1);
       }
       clearFormFields();
       showView("form");
+      $("copiedText").textContent = "สร้างออเดอร์และคัดลอกแล้ว";
+      setTimeout(() => $("copiedText").textContent = "", 1600);
     }
 
     async function copyOutput() {
