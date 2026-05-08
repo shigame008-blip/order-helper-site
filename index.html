@@ -586,6 +586,28 @@
       "สุราษฎธานี": "สุราษฎร์ธานี",
       "อยุธยา": "พระนครศรีอยุธยา"
     };
+    const thaiLocationDataUrl = "https://raw.githubusercontent.com/thailand-geography-data/thailand-geography-json/main/src/geography.json";
+    const thaiLocationCacheKey = "thaiLocationRowsV1";
+    let thaiLocationRowsPromise = null;
+
+    const fallbackLocationRows = [
+      { province: "กรุงเทพมหานคร", district: "ปทุมวัน", subdistrict: "ปทุมวัน", postalCode: "10330" },
+      { province: "กรุงเทพมหานคร", district: "จตุจักร", subdistrict: "จันทรเกษม", postalCode: "10900" },
+      { province: "กรุงเทพมหานคร", district: "สะพานสูง", subdistrict: "สะพานสูง", postalCode: "10240" },
+      { province: "ชลบุรี", district: "เมืองชลบุรี", subdistrict: "บ้านสวน", postalCode: "20000" },
+      { province: "ชลบุรี", district: "บ่อทอง", subdistrict: "บ่อทอง", postalCode: "20270" },
+      { province: "ชลบุรี", district: "บ้านบึง", subdistrict: "หนองบอนแดง", postalCode: "20170" },
+      { province: "ระยอง", district: "บ้านค่าย", subdistrict: "หนองละลอก", postalCode: "21120" },
+      { province: "ระยอง", district: "เมืองระยอง", subdistrict: "ห้วยโป่ง", postalCode: "21150" },
+      { province: "อุดรธานี", district: "เมืองอุดรธานี", subdistrict: "หมากแข้ง", postalCode: "41000" },
+      { province: "สมุทรปราการ", district: "เมืองสมุทรปราการ", subdistrict: "ท้ายบ้าน", postalCode: "10270" },
+      { province: "สงขลา", district: "เมืองสงขลา", subdistrict: "พะวง", postalCode: "90100" },
+      { province: "ภูเก็ต", district: "ถลาง", subdistrict: "เทพกระษัตรี", postalCode: "83110" },
+      { province: "เชียงใหม่", district: "สันป่าตอง", subdistrict: "ทุ่งต้อม", postalCode: "50120" },
+      { province: "นราธิวาส", district: "ระแงะ", subdistrict: "ตันหยงมัส", postalCode: "96130" },
+      { province: "ชัยภูมิ", district: "เกษตรสมบูรณ์", subdistrict: "", postalCode: "" },
+      { province: "ปัตตานี", district: "มายอ", subdistrict: "สาคอบน", postalCode: "94140" }
+    ];
 
     function normalizeDigits(text) {
       return text.replace(/[๐-๙]/g, (d) => thaiDigitMap[d] || d);
@@ -627,11 +649,164 @@
       return bestDistance <= 2 ? best : "";
     }
 
+    function normalizePhoneInput(text) {
+      const digits = normalizeDigits(String(text || "")).replace(/\D/g, "");
+      if (digits.length === 9 && /^[689]/.test(digits)) return `0${digits}`;
+      if (digits.length === 10 && /^0[689]/.test(digits)) return digits;
+      if (digits.length > 10) {
+        const mobile = digits.match(/0[689]\d{8}/);
+        if (mobile) return mobile[0];
+      }
+      return digits;
+    }
+
+    function compactAddressPart(text) {
+      return compactThai(text)
+        .replace(/ตำบล|อำเภอ|จังหวัด|แขวง|เขต|รหัส|ไปรษณีย์/g, "")
+        .replace(/\d{5}/g, "");
+    }
+
+    function compactLocationRows(rows) {
+      return (rows || [])
+        .map((row) => ({
+          province: row.provinceNameTh || row.province || "",
+          district: row.districtNameTh || row.district || "",
+          subdistrict: row.subdistrictNameTh || row.subdistrict || "",
+          postalCode: String(row.postalCode || row.zip_code || "")
+        }))
+        .filter((row) => row.province && row.district);
+    }
+
+    async function loadThaiLocationRows() {
+      if (thaiLocationRowsPromise) return thaiLocationRowsPromise;
+      thaiLocationRowsPromise = (async () => {
+        try {
+          const cached = localStorage.getItem(thaiLocationCacheKey);
+          if (cached) return JSON.parse(cached);
+        } catch (error) {
+          localStorage.removeItem(thaiLocationCacheKey);
+        }
+
+        try {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 1800);
+          const response = await fetch(thaiLocationDataUrl, { signal: controller.signal });
+          clearTimeout(timer);
+          if (!response.ok) throw new Error("location fetch failed");
+          const rows = compactLocationRows(await response.json());
+          try {
+            localStorage.setItem(thaiLocationCacheKey, JSON.stringify(rows));
+          } catch (error) {
+            // The app can still use the in-memory rows even if browser storage is full.
+          }
+          return rows;
+        } catch (error) {
+          return fallbackLocationRows;
+        }
+      })();
+      return thaiLocationRowsPromise;
+    }
+
+    function findBestLocationRow(address, rows) {
+      const normalized = normalizeAddressText(address);
+      const compact = compactAddressPart(normalized);
+      const zip = (normalized.match(/\b\d{5}\b/) || [])[0] || "";
+      let best = null;
+      let bestScore = 0;
+
+      (rows || fallbackLocationRows).forEach((row) => {
+        const province = compactThai(row.province);
+        const district = compactThai(row.district);
+        const subdistrict = compactThai(row.subdistrict);
+        let score = 0;
+        if (zip && row.postalCode === zip) score += 5;
+        if (province && compact.includes(province)) score += 4;
+        if (district && compact.includes(district)) score += 4;
+        if (subdistrict && compact.includes(subdistrict)) score += 5;
+        if (!subdistrict && district && compact.includes(district)) score += 2;
+        if (score > bestScore) {
+          best = row;
+          bestScore = score;
+        }
+      });
+
+      return bestScore >= 7 ? { row: best, score: bestScore } : null;
+    }
+
+    function prefixLocationName(value, name, prefix) {
+      if (!name || value.includes(`${prefix}${name}`) || value.includes(`${prefix}.${name}`)) return value;
+      const pattern = new RegExp(`(^|\\s)(${name})(?=\\s|\\d{5}|$)`);
+      const label = prefix.length === 1 ? `${prefix}.` : prefix;
+      return value.replace(pattern, `$1${label}${name}`);
+    }
+
+    function locationPartsFromAddress(address, row = null) {
+      const normalized = normalizeAddressText(address);
+      const compact = compactAddressPart(normalized);
+      const hasSubdistrictByText = /(ต\.|ตำบล|แขวง)/.test(normalized);
+      const hasDistrictByText = /(อ\.|อำเภอ|เขต)/.test(normalized);
+      const hasProvinceByText = /(จ\.|จังหวัด|กรุงเทพ|กทม)/.test(normalized) || provinceNames.some((p) => compactThai(p) && compact.includes(compactThai(p)));
+      const rowMatch = row || findBestLocationRow(normalized, fallbackLocationRows)?.row;
+      return {
+        hasSubdistrict: hasSubdistrictByText || Boolean(rowMatch?.subdistrict && compact.includes(compactThai(rowMatch.subdistrict))),
+        hasDistrict: hasDistrictByText || Boolean(rowMatch?.district && compact.includes(compactThai(rowMatch.district))),
+        hasProvince: hasProvinceByText || Boolean(rowMatch?.province && compact.includes(compactThai(rowMatch.province))),
+        row: rowMatch
+      };
+    }
+
+    async function enhanceAddressWithThaiLocations(address) {
+      let value = normalizeAddressText(address);
+      const rows = await loadThaiLocationRows();
+      const match = findBestLocationRow(value, rows);
+      if (!match) return value;
+
+      const { row } = match;
+      const isBangkok = row.province === "กรุงเทพมหานคร";
+      value = prefixLocationName(value, row.subdistrict, isBangkok ? "แขวง" : "ต");
+      value = prefixLocationName(value, row.district, isBangkok ? "เขต" : "อ");
+      if (row.province && !/(จ\.|จังหวัด|กรุงเทพ|กทม)/.test(value) && !value.includes(row.province)) {
+        value = `${value} ${isBangkok ? row.province : `จ.${row.province}`}`;
+      }
+      if (row.postalCode && !/\b\d{5}\b/.test(value)) value = `${value} ${row.postalCode}`;
+      return normalizeProvinceTypos(value).replace(/\s+/g, " ").trim();
+    }
+
+    function hasClearHouseNumber(address) {
+      const value = normalizeAddressText(address);
+      if (/(บ้านเลขที่|เลขที่)\s*\d{1,5}/.test(value)) return true;
+      if (/(^|\s)\d{1,5}(\/\d{1,5})?([-\s]|$)/.test(value) && !/(^|\s)(ม\.|หมู่)\s*\d/.test(value)) return true;
+      return /(^|\s)\d{1,5}(\/\d{1,5})?\s*(หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด)/.test(value);
+    }
+
+    function orderSignature(text) {
+      const parsed = parseOrderText(text, currentPage().key);
+      return {
+        phone: normalizePhoneInput(parsed.phone),
+        cod: String(parsed.cod || ""),
+        address: compactAddressPart(parsed.address),
+        product: compactThai(parsed.productLine)
+      };
+    }
+
+    function findDuplicateOrder(text) {
+      const target = orderSignature(text);
+      const store = readOrderStore();
+      const list = store[currentPage().key] || [];
+      return list.find((item) => {
+        if (editingOrder && item.id === editingOrder.id) return false;
+        const other = orderSignature(item.text);
+        if (target.phone && other.phone && target.phone === other.phone) return true;
+        return target.cod && target.cod === other.cod && target.address && target.address === other.address && target.product === other.product;
+      });
+    }
+
     function normalizeProvinceTypos(text) {
       let value = String(text || "");
       Object.entries(provinceAliases).forEach(([wrong, correct]) => {
         value = value.replace(new RegExp(wrong, "g"), correct);
       });
+      value = value.replace(/กรุงเทพมหานครมหานคร/g, "กรุงเทพมหานคร");
       value = value.replace(/(จ\.|จังหวัด)\s*([ก-ฮะ-์]{3,24})/g, (match, prefix, name) => {
         const fixed = closestProvince(name);
         return fixed ? `${prefix}${fixed}` : match;
@@ -644,6 +819,9 @@
       value = value.replace(/(^|\s)(?:ตำบล|ต\.?|ต)\s*([ก-ฮะ-์]{2,})/g, "$1ต.$2");
       value = value.replace(/(^|\s)(?:อำเภอ|อ\.?|อ)\s*([ก-ฮะ-์]{2,})/g, "$1อ.$2");
       value = value.replace(/(^|\s)(?:จังหวัด|จ\.?|จ)\s*([ก-ฮะ-์]{2,})/g, "$1จ.$2");
+      value = value.replace(/ต\.\.+/g, "ต.");
+      value = value.replace(/อ\.\.+/g, "อ.");
+      value = value.replace(/จ\.\.+/g, "จ.");
       value = normalizeProvinceTypos(value);
       return value.replace(/\s+/g, " ").trim();
     }
@@ -860,9 +1038,11 @@
       const normalized = normalizeDigits(text);
       const matches = normalized.match(/0[689][\d\-\s().]{7,20}/g) || [];
       for (const match of matches) {
-        const digits = match.replace(/\D/g, "");
+        const digits = normalizePhoneInput(match);
         if (digits.length === 10) return digits;
       }
+      const loose = normalizePhoneInput(normalized);
+      if (/^0[689]\d{8}$/.test(loose)) return loose;
       return "";
     }
 
@@ -1023,7 +1203,9 @@
       const cod = selectedCod();
       const qty = selectedQty();
       const address = normalizeAddressText($("address").value.trim());
-      const phone = $("phone").value.trim();
+      const phone = normalizePhoneInput($("phone").value.trim());
+      $("phone").value = phone;
+      const locationParts = locationPartsFromAddress(address);
 
       if (!$("customerName").value.trim()) errors.push("ยังไม่มีชื่อลูกค้า");
       if (!/^0[689]\d{8}$/.test(phone)) errors.push("เบอร์โทรต้องเป็นมือถือไทย 10 หลัก");
@@ -1031,8 +1213,8 @@
       if (cod && !page.cod[cod]) errors.push(`COD${cod} ไม่อยู่ในราคาของเพจนี้`);
       if (!qty) errors.push("ยังไม่มีจำนวนสินค้า");
       if (!address) errors.push("ยังไม่มีที่อยู่");
-      if (address && !/\d/.test(address)) errors.push("ที่อยู่ไม่มีเลขบ้าน/ตัวเลข");
-      if (address && !/(จ\.|จังหวัด|กรุงเทพ|กทม|สมุทร|นคร|บุรี|ธานี|ภูเก็ต|สงขลา|ระยอง|ชลบุรี)/.test(address)) errors.push("ที่อยู่ยังไม่เห็นจังหวัดชัดเจน");
+      if (address && !hasClearHouseNumber(address)) errors.push("ยังไม่เห็นบ้านเลขที่ชัดเจน");
+      if (address && !locationParts.hasProvince) errors.push("ที่อยู่ยังไม่เห็นจังหวัดชัดเจน");
       if (page.type === "color" && !$("color").value.trim()) errors.push("สินค้านี้ต้องมีสี");
       if (page.type === "color" && $("color").value.split(",").filter(Boolean).length > qty) errors.push("เลือกสีเกินจำนวนสินค้า");
 
@@ -1044,6 +1226,7 @@
     function buildOrder() {
       updateProductLine();
       $("address").value = normalizeAddressText($("address").value.trim());
+      $("phone").value = normalizePhoneInput($("phone").value.trim());
       const errors = validateOnly();
       const text = `${$("prefix").value}${$("orderNo").value}${$("customerName").value.trim()}
 T.${$("phone").value.trim()}
@@ -1057,15 +1240,20 @@ COD${selectedCod()}
       return { text, errors };
     }
 
-    function blockingOrderErrors() {
+    async function blockingOrderErrors() {
       const errors = [];
-      const phone = $("phone").value.trim();
+      const phone = normalizePhoneInput($("phone").value.trim());
+      $("phone").value = phone;
+      $("address").value = await enhanceAddressWithThaiLocations($("address").value.trim());
       const address = normalizeAddressText($("address").value.trim());
+      const rows = await loadThaiLocationRows();
+      const locationMatch = findBestLocationRow(address, rows);
+      const locationParts = locationPartsFromAddress(address, locationMatch?.row);
 
       if (!/^0[689]\d{8}$/.test(phone)) errors.push("เบอร์โทรไม่ถูกต้อง หรือยังไม่มีเบอร์โทร");
-      if (!/(ต\.|ตำบล|แขวง)/.test(address)) errors.push("ที่อยู่ยังไม่มีตำบล/แขวง");
-      if (!/(อ\.|อำเภอ|เขต)/.test(address)) errors.push("ที่อยู่ยังไม่มีอำเภอ/เขต");
-      if (!/(จ\.|จังหวัด|กรุงเทพ|กทม)/.test(address)) errors.push("ที่อยู่ยังไม่มีจังหวัด/กทม.");
+      if (!locationParts.hasSubdistrict) errors.push("ที่อยู่ยังไม่มีตำบล/แขวง");
+      if (!locationParts.hasDistrict) errors.push("ที่อยู่ยังไม่มีอำเภอ/เขต");
+      if (!locationParts.hasProvince) errors.push("ที่อยู่ยังไม่มีจังหวัด/กทม.");
 
       return errors;
     }
@@ -1205,11 +1393,22 @@ COD${selectedCod()}
 
     async function createOrderAndOpenPage() {
       const shouldAdvance = !editingOrder;
+      $("phone").value = normalizePhoneInput($("phone").value);
+      $("address").value = await enhanceAddressWithThaiLocations($("address").value);
       const { text, errors } = buildOrder();
-      const blockingErrors = blockingOrderErrors();
+      const blockingErrors = await blockingOrderErrors();
       if (blockingErrors.length) {
         alert(`สร้างออเดอร์ไม่สำเร็จ\n\n${blockingErrors.map((error) => `- ${error}`).join("\n")}`);
         setErrors([...blockingErrors, ...errors.filter((error) => !blockingErrors.includes(error))]);
+        return;
+      }
+      if (!hasClearHouseNumber($("address").value) && !confirm("ยังไม่เห็นบ้านเลขที่ชัดเจน\n\nถ้าลูกค้าให้ส่งที่ปั๊ม/ร้าน/ที่ทำงาน หรือไม่มีบ้านเลขที่จริง ๆ สามารถกดยืนยันเพื่อสร้างต่อได้")) {
+        setErrors(["ยังไม่เห็นบ้านเลขที่ชัดเจน"]);
+        return;
+      }
+      const duplicate = findDuplicateOrder(text);
+      if (duplicate && !confirm(`ออเดอร์นี้อาจซ้ำกับรายการเดิม\n\n${duplicate.title}\n\nต้องการสร้างต่อหรือไม่?`)) {
+        setErrors(["พบออเดอร์ที่อาจซ้ำ"]);
         return;
       }
       saveOrderToCurrentPage(text, errors);
@@ -1266,7 +1465,9 @@ COD${selectedCod()}
       document.body.removeChild(temp);
     }
 
-    function saveHistory() {
+    async function saveHistory() {
+      $("phone").value = normalizePhoneInput($("phone").value);
+      $("address").value = await enhanceAddressWithThaiLocations($("address").value);
       const { text } = buildOrder();
       const wasEditing = Boolean(editingOrder);
       saveOrderToCurrentPage(text, validateOnly());
