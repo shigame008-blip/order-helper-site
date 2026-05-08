@@ -370,13 +370,8 @@
 <body class="form-mode admin-locked">
   <section class="admin-gate" id="adminGate">
     <div class="admin-card">
-<<<<<<< HEAD
       <h1>เลือกแอดมิน</h1>
       <p class="small">เลือกชื่อแอดมินเพื่อแสดงเฉพาะเพจที่ดูแล</p>
-=======
-      <h1>เลือกกลุ่มเพจ</h1>
-      <p class="small">เลือก GA หรือ CM เพื่อแสดงเฉพาะเพจในกลุ่มนั้น</p>
->>>>>>> 60f867c9ceff6f92d86d46f143457a674acfec42
       <div class="admin-options" id="adminOptions"></div>
     </div>
   </section>
@@ -540,14 +535,9 @@
     let editingOrder = null;
     let activeGroup = null;
     const pageGroups = [
-<<<<<<< HEAD
       { key: "GA", name: "แอดมินเกม", description: "แสดงเฉพาะเพจ Prefix GA" },
       { key: "CM", name: "แอดมินครีม", description: "แสดงเฉพาะเพจ Prefix CM" },
       { key: "VT", name: "แอดมินวิทย์", description: "แสดงเฉพาะเพจ Prefix VT" }
-=======
-      { key: "GA", name: "GA", description: "แสดงเฉพาะเพจ Prefix GA" },
-      { key: "CM", name: "CM", description: "แสดงเฉพาะเพจ Prefix CM" }
->>>>>>> 60f867c9ceff6f92d86d46f143457a674acfec42
     ];
     const thaiDigitMap = { "๐": "0", "๑": "1", "๒": "2", "๓": "3", "๔": "4", "๕": "5", "๖": "6", "๗": "7", "๘": "8", "๙": "9" };
 
@@ -621,7 +611,7 @@
       Object.entries(provinceAliases).forEach(([wrong, correct]) => {
         value = value.replace(new RegExp(wrong, "g"), correct);
       });
-      value = value.replace(/(จ\.|จังหวัด)\s*([ก-ฮะ]{3,24})/g, (match, prefix, name) => {
+      value = value.replace(/(จ\.|จังหวัด)\s*([ก-ฮะ-์]{3,24})/g, (match, prefix, name) => {
         const fixed = closestProvince(name);
         return fixed ? `${prefix}${fixed}` : match;
       });
