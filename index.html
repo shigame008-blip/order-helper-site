@@ -542,7 +542,7 @@
       { key: "CHADA", page: "ชาด้า", prefix: "GA", product: "นาฬิกาMX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล", "เขียว", "เทา"], defaultColor: "ดำ" },
       { key: "PREMIUM_WATCH", page: "นาฬิกาพรีเมี่ยม", prefix: "GA", product: "นาฬิกาMX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล", "เขียว", "เทา"], defaultColor: "ดำ" },
       { key: "IT_CENTER", page: "ศูนย์รวมสินค้าไอที", prefix: "GA", product: "M55", cod: {249: 1, 390: 2}, type: "color", colors: ["ชมพู", "ม่วง", "ดำ", "ขาว"], defaultColor: "ดำ" },
-      { key: "LSHOP", page: "Lshop", prefix: "GA", product: "หูฟัง X1", cod: {149: 1, 199: 2}, type: "color", colors: ["ดำ", "ม่วง", "ฟ้า", "ครีม"], defaultColor: "ดำ" },
+      { key: "LSHOP", page: "Lshop", prefix: "GA", product: "หูฟัง X1", cod: {149: 1, 199: 2}, type: "color", colors: ["ดำ", "ม่วง", "ฟ้า", "ครีม", "ชมพู", "ขาว"], defaultColor: "ดำ" },
       { key: "KSPL", page: "KSPL", prefix: "VT", product: "ไฟฉายสปอร์ตไลท์", cod: {158: 1, 258: 2, 456: 4}, type: "plain" },
       { key: "ONET", page: "ONET", prefix: "CM", product: "ไฟโซล่าเซลล์", cod: {249: 2, 398: 4, 590: 6}, type: "plain" },
       { key: "A9_CM", page: "กล้องวงจรปิดจิ๋วไร้สาย", prefix: "CM", product: "กล้อง A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
@@ -763,11 +763,6 @@
         input.checked = values.includes(input.value);
       });
 
-      if (!values.length) {
-        const first = $("optionChoices").querySelector("input");
-        if (first) first.checked = true;
-      }
-
       syncOptionValue();
     }
 
@@ -799,7 +794,8 @@
         $("optionChoices").appendChild(label);
       });
 
-      setSelectedOptionText(selectedValue || page.defaultColor || values[0]);
+      const initialValue = selectedValue || (page.type === "size" ? (page.defaultColor || values[0]) : "");
+      setSelectedOptionText(initialValue);
     }
 
     function setStatus(type, message) {
@@ -1246,7 +1242,8 @@ COD${selectedCod()}
       ["raw", "customerName", "fbName", "phone", "address"].forEach((id) => $(id).value = "");
       if (clearOutput) $("output").value = "";
       if (!editingOrder) $("orderNo").value = nextOrderNoForPage(currentPage().key);
-      setSelectedOptionText(currentPage().type === "size" ? "XL" : (currentPage().defaultColor || ""));
+      if (!editingOrder && $("price").options.length) $("price").selectedIndex = 0;
+      setSelectedOptionText(currentPage().type === "size" ? "XL" : "");
       updateProductLine();
       validateOnly();
     }
