@@ -602,6 +602,7 @@
       { key: "GIMINI", page: "Gimini Shop", prefix: "CM", product: "เข็มขัดเก็บหน้าท้อง", cod: {149: 2, 199: 4}, type: "size", sizes: ["L", "XL"], defaultColor: "XL" },
       { key: "CHEAP_LEADING", page: "ศูนย์รวมสินค้าชั้นนำ ราคาถูก", prefix: "CM", product: "ไฟโซล่าเซลล์เหลือง", cod: {249: 1, 390: 2, 590: 3, 780: 4}, type: "plain" },
       { key: "FACTORY_IMPORT", page: "สินค้านำเข้าโรงงาน", prefix: "CM", product: "ไฟโซล่าเซลล์", cod: {349: 2, 599: 4, 790: 6}, type: "plain" },
+      { key: "CM_FLASHLIGHT_WHOLESALE", page: "ไฟฉาย ราคาส่ง", prefix: "CM", product: "ไฟฉายกันน้ำ", cod: {149: 1, 224: 2}, type: "plain" },
     ];
 
     const $ = (id) => document.getElementById(id);
@@ -636,8 +637,7 @@
       "ชลบุร": "ชลบุรี",
       "นครศรีธรรมราช์": "นครศรีธรรมราช",
       "สุราษธานี": "สุราษฎร์ธานี",
-      "สุราษฎธานี": "สุราษฎร์ธานี",
-      "อยุธยา": "พระนครศรีอยุธยา"
+      "สุราษฎธานี": "สุราษฎร์ธานี"
     };
     const thaiLocationDataUrls = [
       "thai_locations.json",
@@ -1011,10 +1011,13 @@
         value = value.replace(new RegExp(wrong, "g"), correct);
       });
       value = value.replace(/กรุงเทพมหานครมหานคร/g, "กรุงเทพมหานคร");
+      value = value.replace(/พระนครศรี(?:พระนครศรี)+อยุธยา/g, "พระนครศรีอยุธยา");
+      value = value.replace(/(^|[\s,])(?:จ\.|จังหวัด)?\s*อยุธยา(?=\s|,|\d{5}|$)/g, "$1จ.พระนครศรีอยุธยา");
       value = value.replace(/(จ\.|จังหวัด)\s*([ก-ฮะ-์]{3,24})/g, (match, prefix, name) => {
         const fixed = closestProvince(name);
         return fixed ? `${prefix}${fixed}` : match;
       });
+      value = value.replace(/พระนครศรี(?:พระนครศรี)+อยุธยา/g, "พระนครศรีอยุธยา");
       return value;
     }
 
