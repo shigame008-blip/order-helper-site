@@ -419,14 +419,29 @@
       display: none;
     }
 
+    .app-version {
+      position: fixed;
+      right: 12px;
+      bottom: 10px;
+      z-index: 80;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1;
+    }
+
     @media (max-width: 1150px) {
       .app {
         grid-template-columns: 1fr;
       }
     }
-  </style>
+</style>
 </head>
 <body class="form-mode admin-locked">
+  <div class="app-version" id="appVersion">v2026-05-09 22:02</div>
   <section class="admin-gate" id="adminGate">
     <div class="admin-card">
       <h1>เลือกแอดมิน</h1>
