@@ -430,7 +430,6 @@
   <section class="admin-gate" id="adminGate">
     <div class="admin-card">
       <h1>เลือกแอดมิน</h1>
-      <p class="small">เลือกชื่อแอดมินเพื่อแสดงเฉพาะเพจที่ดูแล</p>
       <div class="admin-options" id="adminOptions"></div>
     </div>
   </section>
@@ -471,6 +470,16 @@
         <div class="field">
           <label for="price">ราคา / จำนวน</label>
           <select id="price"></select>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label for="customCod">ราคาเอง</label>
+            <input id="customCod" inputmode="numeric" autocomplete="off" placeholder="เช่น 790">
+          </div>
+          <div class="field">
+            <label for="customQty">จำนวนเอง</label>
+            <input id="customQty" inputmode="numeric" autocomplete="off" placeholder="เช่น 6">
+          </div>
         </div>
 
         <div class="actions">
@@ -583,6 +592,11 @@
       { key: "IT_CENTER", page: "ศูนย์รวมสินค้าไอที", prefix: "GA", product: "M55", cod: {249: 1, 390: 2}, type: "color", colors: ["ชมพู", "ม่วง", "ดำ", "ขาว"], defaultColor: "ดำ" },
       { key: "LSHOP", page: "Lshop", prefix: "GA", product: "หูฟัง X1", cod: {149: 1, 199: 2}, type: "color", colors: ["ดำ", "ม่วง", "ฟ้า", "ครีม", "ชมพู", "ขาว"], defaultColor: "ดำ" },
       { key: "KSPL", page: "KSPL", prefix: "VT", product: "ไฟฉายสปอร์ตไลท์", cod: {158: 1, 258: 2, 456: 4}, type: "plain" },
+      { key: "VT_FACTORY_FLASHLIGHT", page: "ไฟฉายแรงสูงราคาโรงงาน ส่งฟรี", prefix: "VT", product: "ไฟฉายกันน้ำ", cod: {147: 1, 224: 2}, type: "plain" },
+      { key: "PKSL", page: "PKSL", prefix: "VT", product: "ไฟฉายLN", cod: {158: 1, 258: 2}, type: "plain" },
+      { key: "VT_MASSAGE_SEAT", page: "สินค้าหลังห้าง ราคาถูกที่สุด", prefix: "VT", product: "เบาะนวด", cod: {349: 1, 590: 2}, type: "plain" },
+      { key: "VT_POWERBANK", page: "แบตสำรองมือถือ", prefix: "VT", product: "M55", cod: {249: 1, 390: 2, 590: 3}, type: "color", colors: ["ม่วง", "ดำ", "ขาว", "ชมพู"], defaultColor: "ดำ" },
+      { key: "VT_OX_WATCH", page: "นาฬิการาคาส่ง", prefix: "VT", product: "นาฬิกา OX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล"], defaultColor: "ดำ" },
       { key: "ONET", page: "ONET", prefix: "CM", product: "ไฟโซล่าเซลล์", cod: {249: 2, 398: 4, 590: 6}, type: "plain" },
       { key: "A9_CM", page: "กล้องวงจรปิดจิ๋วไร้สาย", prefix: "CM", product: "กล้อง A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
       { key: "GIMINI", page: "Gimini Shop", prefix: "CM", product: "เข็มขัดเก็บหน้าท้อง", cod: {149: 2, 199: 4}, type: "size", sizes: ["L", "XL"], defaultColor: "XL" },
@@ -595,9 +609,9 @@
     let editingOrder = null;
     let activeGroup = null;
     const pageGroups = [
-      { key: "GA", name: "แอดมินเกม", description: "แสดงเฉพาะเพจ Prefix GA" },
-      { key: "CM", name: "แอดมินครีม", description: "แสดงเฉพาะเพจ Prefix CM" },
-      { key: "VT", name: "แอดมินวิทย์", description: "แสดงเฉพาะเพจ Prefix VT" }
+      { key: "GA", name: "แอดมินเกม", description: "" },
+      { key: "CM", name: "แอดมินครีม", description: "" },
+      { key: "VT", name: "แอดมินวิทย์", description: "" }
     ];
     const thaiDigitMap = { "๐": "0", "๑": "1", "๒": "2", "๓": "3", "๔": "4", "๕": "5", "๖": "6", "๗": "7", "๘": "8", "๙": "9" };
 
@@ -826,32 +840,52 @@
       box.innerHTML = "";
     }
 
+    function escapeRegExp(value) {
+      return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function stripExistingLocationParts(value, row) {
+      let text = normalizeAddressText(value);
+      const phone = extractPhone(text);
+      if (phone) text = text.replace(new RegExp(escapeRegExp(phone), "g"), "");
+      text = text.replace(/\b\d{5}\b/g, "");
+      text = text.replace(/\s*(เก็บเงินปลายทาง|ชำระเงินปลายทาง|ปลายทาง)\s*$/g, "");
+
+      const locationChunks = [
+        /(?:ตำบล|ต\.|แขวง)\s*[ก-ฮะ-์]{2,30}/g,
+        /(?:อำเภอ|อ\.|เขต)\s*[ก-ฮะ-์]{2,30}/g,
+        /(?:จังหวัด|จ\.)\s*[ก-ฮะ-์]{2,30}/g
+      ];
+      locationChunks.forEach((pattern) => {
+        text = text.replace(pattern, " ");
+      });
+
+      [row.subdistrict, row.district, row.province, ...provinceNames].filter(Boolean).forEach((name) => {
+        text = text.replace(new RegExp(escapeRegExp(name), "g"), " ");
+      });
+
+      text = text.replace(/^[ก-ฮะ-์A-Za-z.'\s]{2,60}[.,]\s*(?=.*\d)/, "");
+      return text.replace(/\s+/g, " ").trim();
+    }
+
     function applyLocationRow(row) {
       const rawText = $("raw").value.trim();
-      if (!$("phone").value.trim()) {
-        const phone = extractPhone(rawText);
-        if (phone) $("phone").value = phone;
+      const rawPhone = extractPhone(rawText);
+      if (!$("phone").value.trim() && rawPhone) {
+        $("phone").value = rawPhone;
       }
       if (!$("customerName").value.trim()) {
         const name = extractName(rawText);
         if (name) $("customerName").value = name;
       }
 
-      const current = normalizeAddressText($("address").value.trim() || rawText);
-      const phone = extractPhone(current);
-      let value = phone ? current.replace(phone, "") : current;
-      value = value.replace(/\b\d{5}\b/g, "").trim();
+      const candidate = $("address").value.trim() || extractAddress(rawText) || rawText;
+      const base = stripExistingLocationParts(candidate, row);
+      const location = formatLocationRow(row);
+      const finalAddress = normalizeAddressText([base, location].filter(Boolean).join(" "));
 
-      const hasSubdistrict = row.subdistrict && compactAddressPart(value).includes(compactThai(row.subdistrict));
-      const hasDistrict = row.district && compactAddressPart(value).includes(compactThai(row.district));
-      const hasProvince = row.province && compactAddressPart(value).includes(compactThai(row.province));
-      const parts = [value];
-      if (!hasSubdistrict && row.subdistrict) parts.push(`${row.province === "กรุงเทพมหานคร" ? "แขวง" : "ต."}${row.subdistrict}`);
-      if (!hasDistrict && row.district) parts.push(`${row.province === "กรุงเทพมหานคร" ? "เขต" : "อ."}${row.district}`);
-      if (!hasProvince && row.province) parts.push(row.province === "กรุงเทพมหานคร" ? row.province : `จ.${row.province}`);
-      if (row.postalCode) parts.push(row.postalCode);
-
-      $("address").value = normalizeAddressText(parts.join(" "));
+      $("raw").value = finalAddress;
+      $("address").value = finalAddress;
       hideLocationSuggestions();
       validateOnly();
       buildOrder();
@@ -874,6 +908,10 @@
     async function showLocationSuggestionsForAddress(address) {
       const box = $("locationSuggestions");
       if (!box) return;
+      if (document.activeElement !== $("raw")) {
+        hideLocationSuggestions();
+        return;
+      }
       const rows = await loadThaiLocationRows();
       const suggestions = findLocationSuggestions(address, rows);
       box.innerHTML = "";
@@ -892,6 +930,7 @@
         button.type = "button";
         button.className = "location-suggestion";
         button.textContent = formatLocationRow(row);
+        button.addEventListener("mousedown", (event) => event.preventDefault());
         button.addEventListener("click", () => applyLocationRow(row));
         box.appendChild(button);
       });
@@ -1016,7 +1055,7 @@
         const button = document.createElement("button");
         button.className = "admin-option";
         button.type = "button";
-        button.innerHTML = `<strong>${group.name}</strong><span class="small">${group.description}</span>`;
+        button.innerHTML = `<strong>${group.name}</strong>${group.description ? `<span class="small">${group.description}</span>` : ""}`;
         button.addEventListener("click", () => selectGroup(group.key));
         $("adminOptions").appendChild(button);
       });
@@ -1064,10 +1103,14 @@
     }
 
     function selectedCod() {
+      const custom = $("customCod")?.value.trim();
+      if (custom) return custom;
       return $("price").value.trim();
     }
 
     function selectedQty() {
+      const custom = $("customQty")?.value.trim();
+      if (custom) return Number(custom || 0);
       const page = currentPage();
       return Number(page.cod[selectedCod()] || 0);
     }
@@ -1353,7 +1396,6 @@
       if (color) setSelectedOptionText(color);
       updateProductLine();
       validateOnly();
-      await showLocationSuggestionsForAddress($("address").value || raw);
     }
 
     function updateProductLine() {
@@ -1376,7 +1418,10 @@
       if (!$("customerName").value.trim()) errors.push("ยังไม่มีชื่อลูกค้า");
       if (!/^0[689]\d{8}$/.test(phone)) errors.push("เบอร์โทรต้องเป็นมือถือไทย 10 หลัก");
       if (!cod) errors.push("ยังไม่ได้เลือกราคา");
-      if (cod && !page.cod[cod]) errors.push(`COD${cod} ไม่อยู่ในราคาของเพจนี้`);
+      if (cod && !page.cod[cod] && !$("customCod").value.trim()) errors.push(`COD${cod} ไม่อยู่ในราคาของเพจนี้`);
+      if ($("customCod").value.trim() && !/^\d{2,5}$/.test($("customCod").value.trim())) errors.push("ราคาเองต้องเป็นตัวเลข");
+      if ($("customQty").value.trim() && !/^\d{1,3}$/.test($("customQty").value.trim())) errors.push("จำนวนเองต้องเป็นตัวเลข");
+      if (($("customCod").value.trim() && !$("customQty").value.trim()) || (!$("customCod").value.trim() && $("customQty").value.trim())) errors.push("ถ้าใช้ราคาเอง ต้องกรอกทั้งราคาและจำนวน");
       if (!qty) errors.push("ยังไม่มีจำนวนสินค้า");
       if (!address) errors.push("ยังไม่มีที่อยู่");
       if (address && !hasClearHouseNumber(address)) errors.push("ยังไม่เห็นบ้านเลขที่ชัดเจน");
@@ -1428,6 +1473,8 @@ COD${selectedCod()}
       return {
         pageKey: currentPage().key,
         price: selectedCod(),
+        customCod: $("customCod").value,
+        customQty: $("customQty").value,
         prefix: $("prefix").value,
         orderNo: $("orderNo").value,
         raw: $("raw").value,
@@ -1453,6 +1500,8 @@ COD${selectedCod()}
       $("page").value = data.pageKey || item.pageKey || currentPage().key;
       $("page").dispatchEvent(new Event("change"));
       if (data.price) $("price").value = data.price;
+      $("customCod").value = data.customCod || "";
+      $("customQty").value = data.customQty || "";
       $("prefix").value = data.prefix || "";
       $("orderNo").value = data.orderNo || "";
       $("raw").value = data.raw || "";
@@ -1481,6 +1530,8 @@ COD${selectedCod()}
       return {
         pageKey,
         price: codMatch ? codMatch[1] : "",
+        customCod: "",
+        customQty: "",
         prefix: prefixMatch ? prefixMatch[1] : "",
         orderNo: prefixMatch ? prefixMatch[2] : "",
         customerName: prefixMatch ? prefixMatch[3] : "",
@@ -1609,6 +1660,10 @@ COD${selectedCod()}
       if (clearOutput) $("output").value = "";
       if (!editingOrder) $("orderNo").value = nextOrderNoForPage(currentPage().key);
       if (!editingOrder && $("price").options.length) $("price").selectedIndex = 0;
+      if (!editingOrder) {
+        $("customCod").value = "";
+        $("customQty").value = "";
+      }
       setSelectedOptionText(currentPage().type === "size" ? "XL" : "");
       updateProductLine();
       validateOnly();
@@ -1767,13 +1822,15 @@ COD${selectedCod()}
       });
 
       $("price").addEventListener("change", () => {
+        $("customCod").value = "";
+        $("customQty").value = "";
         updateProductLine();
         validateOnly();
       });
 
       $("optionChoices").addEventListener("change", syncOptionValue);
 
-      ["customerName", "fbName", "phone", "address", "prefix", "orderNo"].forEach((id) => {
+      ["customerName", "fbName", "phone", "address", "prefix", "orderNo", "customCod", "customQty"].forEach((id) => {
         $(id).addEventListener("input", () => {
           updateProductLine();
           validateOnly();
@@ -1782,8 +1839,11 @@ COD${selectedCod()}
 
       $("raw").addEventListener("input", scheduleLocationSuggestionsFromRaw);
       $("raw").addEventListener("paste", () => setTimeout(scheduleLocationSuggestionsFromRaw, 0));
-      $("address").addEventListener("blur", () => {
-        showLocationSuggestionsForAddress($("address").value);
+      document.addEventListener("focusin", (event) => {
+        const box = $("locationSuggestions");
+        if (event.target !== $("raw") && box && !box.contains(event.target)) {
+          hideLocationSuggestions();
+        }
       });
 
       $("formViewBtn").addEventListener("click", () => showView("form"));
