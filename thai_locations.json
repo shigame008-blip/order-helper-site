@@ -1,0 +1,18 @@
+[
+  {"province":"กรุงเทพมหานคร","district":"ปทุมวัน","subdistrict":"ปทุมวัน","postalCode":"10330"},
+  {"province":"กรุงเทพมหานคร","district":"จตุจักร","subdistrict":"จันทรเกษม","postalCode":"10900"},
+  {"province":"กรุงเทพมหานคร","district":"สะพานสูง","subdistrict":"สะพานสูง","postalCode":"10240"},
+  {"province":"ชลบุรี","district":"เมืองชลบุรี","subdistrict":"บ้านสวน","postalCode":"20000"},
+  {"province":"ชลบุรี","district":"บ่อทอง","subdistrict":"บ่อทอง","postalCode":"20270"},
+  {"province":"ชลบุรี","district":"บ้านบึง","subdistrict":"หนองบอนแดง","postalCode":"20170"},
+  {"province":"ระยอง","district":"บ้านค่าย","subdistrict":"หนองละลอก","postalCode":"21120"},
+  {"province":"ระยอง","district":"เมืองระยอง","subdistrict":"ห้วยโป่ง","postalCode":"21150"},
+  {"province":"อุดรธานี","district":"เมืองอุดรธานี","subdistrict":"หมากแข้ง","postalCode":"41000"},
+  {"province":"สมุทรปราการ","district":"เมืองสมุทรปราการ","subdistrict":"ท้ายบ้าน","postalCode":"10270"},
+  {"province":"สงขลา","district":"เมืองสงขลา","subdistrict":"พะวง","postalCode":"90100"},
+  {"province":"ภูเก็ต","district":"ถลาง","subdistrict":"เทพกระษัตรี","postalCode":"83110"},
+  {"province":"เชียงใหม่","district":"สันป่าตอง","subdistrict":"ทุ่งต้อม","postalCode":"50120"},
+  {"province":"นราธิวาส","district":"ระแงะ","subdistrict":"ตันหยงมัส","postalCode":"96130"},
+  {"province":"ชัยภูมิ","district":"เกษตรสมบูรณ์","subdistrict":"","postalCode":""},
+  {"province":"ปัตตานี","district":"มายอ","subdistrict":"สาคอบน","postalCode":"94140"}
+]

@@ -209,6 +209,44 @@
       line-height: 1.55;
     }
 
+    .location-suggestions {
+      display: none;
+      margin: -4px 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .location-suggestions.show {
+      display: block;
+    }
+
+    .location-suggestions .suggestion-head {
+      padding: 8px 10px;
+      color: var(--muted);
+      font-size: 12px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .location-suggestion {
+      display: block;
+      width: 100%;
+      min-height: auto;
+      padding: 9px 10px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      text-align: left;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .location-suggestion:hover {
+      background: #eef5ff;
+    }
+
     .output {
       min-height: 300px;
       white-space: pre-wrap;
@@ -459,6 +497,7 @@
           <button class="primary" id="parseBtn">ดึงข้อมูลจากช่องนี้</button>
           <button id="clearBtn">ล้างข้อมูล</button>
         </div>
+        <div class="location-suggestions" id="locationSuggestions"></div>
 
         <div class="grid">
           <div class="field">
@@ -586,8 +625,11 @@
       "สุราษฎธานี": "สุราษฎร์ธานี",
       "อยุธยา": "พระนครศรีอยุธยา"
     };
-    const thaiLocationDataUrl = "https://raw.githubusercontent.com/thailand-geography-data/thailand-geography-json/main/src/geography.json";
-    const thaiLocationCacheKey = "thaiLocationRowsV1";
+    const thaiLocationDataUrls = [
+      "thai_locations.json",
+      "https://raw.githubusercontent.com/thailand-geography-data/thailand-geography-json/main/src/geography.json"
+    ];
+    const thaiLocationCacheKey = "thaiLocationRowsV2";
     let thaiLocationRowsPromise = null;
 
     const fallbackLocationRows = [
@@ -687,22 +729,27 @@
           localStorage.removeItem(thaiLocationCacheKey);
         }
 
-        try {
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 1800);
-          const response = await fetch(thaiLocationDataUrl, { signal: controller.signal });
-          clearTimeout(timer);
-          if (!response.ok) throw new Error("location fetch failed");
-          const rows = compactLocationRows(await response.json());
+        for (const url of thaiLocationDataUrls) {
           try {
-            localStorage.setItem(thaiLocationCacheKey, JSON.stringify(rows));
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), url.startsWith("http") ? 1800 : 800);
+            const response = await fetch(url, { signal: controller.signal, cache: "force-cache" });
+            clearTimeout(timer);
+            if (!response.ok) throw new Error("location fetch failed");
+            const rows = compactLocationRows(await response.json());
+            if (!rows.length) throw new Error("location data empty");
+            if (url === "thai_locations.json" && rows.length < 1000) throw new Error("location data sample only");
+            try {
+              localStorage.setItem(thaiLocationCacheKey, JSON.stringify(rows));
+            } catch (error) {
+              // The app can still use the in-memory rows even if browser storage is full.
+            }
+            return rows;
           } catch (error) {
-            // The app can still use the in-memory rows even if browser storage is full.
+            // Try the next source, then fall back to the built-in sample rows.
           }
-          return rows;
-        } catch (error) {
-          return fallbackLocationRows;
         }
+        return fallbackLocationRows;
       })();
       return thaiLocationRowsPromise;
     }
@@ -731,6 +778,99 @@
       });
 
       return bestScore >= 7 ? { row: best, score: bestScore } : null;
+    }
+
+    function findLocationSuggestions(address, rows, limit = 5) {
+      const normalized = normalizeAddressText(address);
+      const compact = compactAddressPart(normalized);
+      const zip = (normalized.match(/\b\d{5}\b/) || [])[0] || "";
+      const seen = new Set();
+
+      return (rows || fallbackLocationRows)
+        .map((row) => {
+          const province = compactThai(row.province);
+          const district = compactThai(row.district);
+          const subdistrict = compactThai(row.subdistrict);
+          let score = 0;
+          if (zip && row.postalCode === zip) score += 8;
+          if (province && compact.includes(province)) score += 5;
+          if (district && compact.includes(district)) score += 5;
+          if (subdistrict && compact.includes(subdistrict)) score += 7;
+          if (subdistrict && subdistrict.length >= 4 && compact.includes(subdistrict.slice(0, 4))) score += 2;
+          return { row, score };
+        })
+        .filter((item) => item.score >= 7)
+        .sort((a, b) => b.score - a.score)
+        .filter((item) => {
+          const key = `${item.row.subdistrict}|${item.row.district}|${item.row.province}|${item.row.postalCode}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .slice(0, limit);
+    }
+
+    function formatLocationRow(row) {
+      const isBangkok = row.province === "กรุงเทพมหานคร";
+      const subdistrict = row.subdistrict ? `${isBangkok ? "แขวง" : "ต."}${row.subdistrict}` : "";
+      const district = row.district ? `${isBangkok ? "เขต" : "อ."}${row.district}` : "";
+      const province = row.province ? `${isBangkok ? "" : "จ."}${row.province}` : "";
+      return [subdistrict, district, province, row.postalCode].filter(Boolean).join(" ");
+    }
+
+    function hideLocationSuggestions() {
+      const box = $("locationSuggestions");
+      if (!box) return;
+      box.classList.remove("show");
+      box.innerHTML = "";
+    }
+
+    function applyLocationRow(row) {
+      const current = normalizeAddressText($("address").value.trim() || $("raw").value.trim());
+      const phone = extractPhone(current);
+      let value = phone ? current.replace(phone, "") : current;
+      value = value.replace(/\b\d{5}\b/g, "").trim();
+
+      const hasSubdistrict = row.subdistrict && compactAddressPart(value).includes(compactThai(row.subdistrict));
+      const hasDistrict = row.district && compactAddressPart(value).includes(compactThai(row.district));
+      const hasProvince = row.province && compactAddressPart(value).includes(compactThai(row.province));
+      const parts = [value];
+      if (!hasSubdistrict && row.subdistrict) parts.push(`${row.province === "กรุงเทพมหานคร" ? "แขวง" : "ต."}${row.subdistrict}`);
+      if (!hasDistrict && row.district) parts.push(`${row.province === "กรุงเทพมหานคร" ? "เขต" : "อ."}${row.district}`);
+      if (!hasProvince && row.province) parts.push(row.province === "กรุงเทพมหานคร" ? row.province : `จ.${row.province}`);
+      if (row.postalCode) parts.push(row.postalCode);
+
+      $("address").value = normalizeAddressText(parts.join(" "));
+      hideLocationSuggestions();
+      validateOnly();
+      buildOrder();
+    }
+
+    async function showLocationSuggestionsForAddress(address) {
+      const box = $("locationSuggestions");
+      if (!box) return;
+      const rows = await loadThaiLocationRows();
+      const suggestions = findLocationSuggestions(address, rows);
+      box.innerHTML = "";
+      if (!suggestions.length) {
+        hideLocationSuggestions();
+        return;
+      }
+
+      const head = document.createElement("div");
+      head.className = "suggestion-head";
+      head.textContent = "เลือกตำบล/อำเภอ/จังหวัดที่ตรงกับลูกค้า";
+      box.appendChild(head);
+
+      suggestions.forEach(({ row }) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "location-suggestion";
+        button.textContent = formatLocationRow(row);
+        button.addEventListener("click", () => applyLocationRow(row));
+        box.appendChild(button);
+      });
+      box.classList.add("show");
     }
 
     function prefixLocationName(value, name, prefix) {
@@ -1170,7 +1310,7 @@
       }).join("")}`.replace(/\*$/, "");
     }
 
-    function fillFromRaw() {
+    async function fillFromRaw() {
       const raw = $("raw").value;
       const page = currentPage();
       const phone = extractPhone(raw);
@@ -1188,6 +1328,7 @@
       if (color) setSelectedOptionText(color);
       updateProductLine();
       validateOnly();
+      await showLocationSuggestionsForAddress($("address").value || raw);
     }
 
     function updateProductLine() {
@@ -1439,6 +1580,7 @@ COD${selectedCod()}
 
     function clearFormFields(clearOutput = false) {
       ["raw", "customerName", "fbName", "phone", "address"].forEach((id) => $(id).value = "");
+      hideLocationSuggestions();
       if (clearOutput) $("output").value = "";
       if (!editingOrder) $("orderNo").value = nextOrderNoForPage(currentPage().key);
       if (!editingOrder && $("price").options.length) $("price").selectedIndex = 0;
@@ -1611,6 +1753,10 @@ COD${selectedCod()}
           updateProductLine();
           validateOnly();
         });
+      });
+
+      $("address").addEventListener("blur", () => {
+        showLocationSuggestionsForAddress($("address").value);
       });
 
       $("formViewBtn").addEventListener("click", () => showView("form"));
