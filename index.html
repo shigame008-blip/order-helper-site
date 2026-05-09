@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="th">
 <head>
   <meta charset="utf-8">
@@ -441,33 +441,33 @@
 </style>
 </head>
 <body class="form-mode admin-locked">
-  <div class="app-version" id="appVersion">v2026-05-09 23:30</div>
+  <div class="app-version" id="appVersion">v2026-05-09 23:40</div>
   <section class="admin-gate" id="adminGate">
     <div class="admin-card">
-      <h1>เน€เธฅเธทเธญเธเนเธญเธ”เธกเธดเธ</h1>
+      <h1>เลือกแอดมิน</h1>
       <div class="admin-options" id="adminOptions"></div>
     </div>
   </section>
 
   <nav class="topbar">
     <div class="view-buttons">
-      <button id="formViewBtn" class="active">เธซเธเนเธฒเธเธฃเธญเธเธญเธญเน€เธ”เธญเธฃเน</button>
-      <button id="ordersViewBtn">เธซเธเนเธฒเธญเธญเน€เธ”เธญเธฃเน</button>
-      <button id="summaryViewBtn">เธซเธเนเธฒเธชเธฃเธธเธเธขเธญเธ”</button>
+      <button id="formViewBtn" class="active">หน้ากรอกออเดอร์</button>
+      <button id="ordersViewBtn">หน้าออเดอร์</button>
+      <button id="summaryViewBtn">หน้าสรุปยอด</button>
     </div>
-    <span class="small">เนเธขเธเธญเธญเน€เธ”เธญเธฃเนเธ•เธฒเธกเน€เธเธ</span>
-    <button id="changeGroupBtn" type="button">เน€เธเธฅเธตเนเธขเธเธเธฅเธธเนเธก</button>
+    <span class="small">แยกออเดอร์ตามเพจ</span>
+    <button id="changeGroupBtn" type="button">เปลี่ยนกลุ่ม</button>
   </nav>
 
   <main class="app">
     <section class="panel form-panel">
       <div class="panel-head">
-        <h1>เธ•เธฑเธงเธเนเธงเธขเธชเธฃเนเธฒเธเธญเธญเน€เธ”เธญเธฃเน</h1>
+        <h1>ตัวช่วยสร้างออเดอร์</h1>
         <span class="small">v1</span>
       </div>
       <div class="body">
         <div class="field">
-          <label for="page">เน€เธเธ / เธชเธดเธเธเนเธฒ</label>
+          <label for="page">เพจ / สินค้า</label>
           <select id="page"></select>
         </div>
 
@@ -477,89 +477,89 @@
             <input id="prefix" autocomplete="off">
           </div>
           <div class="field">
-            <label for="orderNo">เน€เธฅเธเธญเธญเน€เธ”เธญเธฃเน</label>
+            <label for="orderNo">เลขออเดอร์</label>
             <input id="orderNo" inputmode="numeric" autocomplete="off" value="1">
           </div>
         </div>
 
         <div class="field">
-          <label for="price">เธฃเธฒเธเธฒ / เธเธณเธเธงเธ</label>
+          <label for="price">ราคา / จำนวน</label>
           <select id="price"></select>
         </div>
         <div class="grid">
           <div class="field">
-            <label for="customCod">เธฃเธฒเธเธฒเน€เธญเธ</label>
-            <input id="customCod" inputmode="numeric" autocomplete="off" placeholder="เน€เธเนเธ 790">
+            <label for="customCod">ราคาเอง</label>
+            <input id="customCod" inputmode="numeric" autocomplete="off" placeholder="เช่น 790">
           </div>
           <div class="field">
-            <label for="customQty">เธเธณเธเธงเธเน€เธญเธ</label>
-            <input id="customQty" inputmode="numeric" autocomplete="off" placeholder="เน€เธเนเธ 6">
+            <label for="customQty">จำนวนเอง</label>
+            <input id="customQty" inputmode="numeric" autocomplete="off" placeholder="เช่น 6">
           </div>
         </div>
 
         <div class="actions">
-          <button id="nextBtn">เน€เธฅเธเธ–เธฑเธ”เนเธ</button>
+          <button id="nextBtn">เลขถัดไป</button>
         </div>
 
         <div style="height: 14px"></div>
-        <div class="status" id="status"><span class="dot"></span><span>เธเธฃเนเธญเธกเนเธเนเธเธฒเธ</span></div>
+        <div class="status" id="status"><span class="dot"></span><span>พร้อมใช้งาน</span></div>
       </div>
     </section>
 
     <section class="panel form-panel">
       <div class="panel-head">
-        <h2>เธเนเธญเธกเธนเธฅเธญเธญเน€เธ”เธญเธฃเน</h2>
-        <span class="small">เนเธเนเธเนเธญเธเธเธตเนเธเนเธญเธเธเธฑเธ”เธฅเธญเธเนเธ”เน</span>
+        <h2>ข้อมูลออเดอร์</h2>
+        <span class="small">แก้ช่องนี้ก่อนคัดลอกได้</span>
       </div>
       <div class="body">
         <div class="field">
-          <label for="raw">เธงเธฒเธเธเนเธญเธกเธนเธฅเธฅเธนเธเธเนเธฒ / เธ—เธตเนเธญเธขเธนเน เธเนเธญเธเน€เธ”เธตเธขเธง</label>
-          <textarea id="raw" placeholder="เธงเธฒเธเธเนเธญเธเธงเธฒเธกเธเธฒเธเนเธเธ—เธซเธฃเธทเธญเธ—เธตเนเธญเธขเธนเนเธฅเธนเธเธเนเธฒเธ•เธฃเธเธเธตเน"></textarea>
+          <label for="raw">วางข้อมูลลูกค้า / ที่อยู่ ช่องเดียว</label>
+          <textarea id="raw" placeholder="วางข้อความจากแชทหรือที่อยู่ลูกค้าตรงนี้"></textarea>
         </div>
 
         <div class="actions" style="margin-bottom: 12px">
-          <button class="primary" id="parseBtn">เธ”เธถเธเธเนเธญเธกเธนเธฅเธเธฒเธเธเนเธญเธเธเธตเน</button>
-          <button id="clearBtn">เธฅเนเธฒเธเธเนเธญเธกเธนเธฅ</button>
+          <button class="primary" id="parseBtn">ดึงข้อมูลจากช่องนี้</button>
+          <button id="clearBtn">ล้างข้อมูล</button>
         </div>
         <div class="location-suggestions" id="locationSuggestions"></div>
 
         <div class="grid">
           <div class="field">
-            <label for="customerName">เธเธทเนเธญเธฅเธนเธเธเนเธฒ</label>
+            <label for="customerName">ชื่อลูกค้า</label>
             <input id="customerName" autocomplete="off">
           </div>
           <div class="field">
-            <label for="fbName">เธเธทเนเธญ FB</label>
+            <label for="fbName">ชื่อ FB</label>
             <input id="fbName" autocomplete="off">
           </div>
         </div>
 
         <div class="field">
-          <label for="phone">เน€เธเธญเธฃเนเนเธ—เธฃ</label>
+          <label for="phone">เบอร์โทร</label>
           <input id="phone" inputmode="tel" autocomplete="off">
         </div>
 
         <div class="field">
-          <label for="address">เธ—เธตเนเธญเธขเธนเน</label>
+          <label for="address">ที่อยู่</label>
           <textarea id="address" style="min-height: 92px"></textarea>
         </div>
 
         <div class="grid">
           <div class="field" id="optionField">
-            <label id="optionLabel">เธชเธต / เนเธเธเน</label>
+            <label id="optionLabel">สี / ไซซ์</label>
             <div class="choice-wrap" id="optionChoices"></div>
             <input type="hidden" id="color">
           </div>
           <div class="field">
-            <label for="productLine">เธเธฃเธฃเธ—เธฑเธ”เธชเธดเธเธเนเธฒ</label>
+            <label for="productLine">บรรทัดสินค้า</label>
             <input id="productLine" autocomplete="off">
           </div>
         </div>
 
         <div class="actions">
-          <button class="primary" id="buildBtn">เธชเธฃเนเธฒเธเธญเธญเน€เธ”เธญเธฃเน</button>
-          <button id="copyBtn">เธเธฑเธ”เธฅเธญเธ</button>
-          <button id="saveBtn">เธเธฑเธเธ—เธถเธเนเธงเน</button>
+          <button class="primary" id="buildBtn">สร้างออเดอร์</button>
+          <button id="copyBtn">คัดลอก</button>
+          <button id="saveBtn">บันทึกไว้</button>
         </div>
 
         <div style="height: 12px"></div>
@@ -569,20 +569,20 @@
 
     <section class="panel result-panel">
       <div class="panel-head">
-        <h2>เธซเธเนเธฒเธญเธญเน€เธ”เธญเธฃเน</h2>
+        <h2>หน้าออเดอร์</h2>
         <span class="small" id="copiedText"></span>
       </div>
       <div class="body">
         <div class="page-tabs" id="pageTabs"></div>
         <textarea id="output" class="output" readonly></textarea>
         <div class="actions" style="margin-top: 10px">
-          <button class="primary" id="copyCurrentOrderBtn">เธเธฑเธ”เธฅเธญเธเธญเธญเน€เธ”เธญเธฃเนเธเธตเน</button>
+          <button class="primary" id="copyCurrentOrderBtn">คัดลอกออเดอร์นี้</button>
         </div>
 
         <div style="height: 14px"></div>
         <div class="panel-head" style="padding: 0 0 10px; border-bottom: 0; box-shadow: none">
-          <h2 id="orderListTitle">เธฃเธฒเธขเธเธฒเธฃเนเธเน€เธเธเธเธตเน</h2>
-          <button id="clearHistoryBtn" style="min-height: 34px; padding: 6px 10px">เธฅเนเธฒเธเน€เธเธเธเธตเน</button>
+          <h2 id="orderListTitle">รายการในเพจนี้</h2>
+          <button id="clearHistoryBtn" style="min-height: 34px; padding: 6px 10px">ล้างเพจนี้</button>
         </div>
         <div class="history" id="history"></div>
       </div>
@@ -590,8 +590,8 @@
 
     <section class="panel summary-panel">
       <div class="panel-head">
-        <h2>เธชเธฃเธธเธเธขเธญเธ”เนเธ•เนเธฅเธฐเน€เธเธ</h2>
-        <button id="refreshSummaryBtn" style="min-height: 34px; padding: 6px 10px">เธฃเธตเน€เธเธฃเธ</button>
+        <h2>สรุปยอดแต่ละเพจ</h2>
+        <button id="refreshSummaryBtn" style="min-height: 34px; padding: 6px 10px">รีเฟรช</button>
       </div>
       <div class="body">
         <div class="summary-grid" id="summaryList"></div>
@@ -601,23 +601,23 @@
 
   <script>
     const pages = [
-      { key: "VGSHOP", page: "Vgshop", prefix: "GA", product: "เธเธฅเนเธญเธ A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
-      { key: "CHADA", page: "เธเธฒเธ”เนเธฒ", prefix: "GA", product: "เธเธฒเธฌเธดเธเธฒMX", cod: {149: 2, 249: 4}, type: "color", colors: ["เธ”เธณ", "เธเนเธณเธ•เธฒเธฅ", "เน€เธเธตเธขเธง", "เน€เธ—เธฒ"], defaultColor: "เธ”เธณ" },
-      { key: "PREMIUM_WATCH", page: "เธเธฒเธฌเธดเธเธฒเธเธฃเธตเน€เธกเธตเนเธขเธก", prefix: "GA", product: "เธเธฒเธฌเธดเธเธฒMX", cod: {149: 2, 249: 4}, type: "color", colors: ["เธ”เธณ", "เธเนเธณเธ•เธฒเธฅ", "เน€เธเธตเธขเธง", "เน€เธ—เธฒ"], defaultColor: "เธ”เธณ" },
-      { key: "IT_CENTER", page: "เธจเธนเธเธขเนเธฃเธงเธกเธชเธดเธเธเนเธฒเนเธญเธ—เธต", prefix: "GA", product: "M55", cod: {249: 1, 390: 2}, type: "color", colors: ["เธเธกเธเธน", "เธกเนเธงเธ", "เธ”เธณ", "เธเธฒเธง"], defaultColor: "เธ”เธณ" },
-      { key: "LSHOP", page: "Lshop", prefix: "GA", product: "เธซเธนเธเธฑเธ X1", cod: {149: 1, 199: 2}, type: "color", colors: ["เธ”เธณ", "เธกเนเธงเธ", "เธเนเธฒ", "เธเธฃเธตเธก", "เธเธกเธเธน", "เธเธฒเธง"], defaultColor: "เธ”เธณ" },
-      { key: "KSPL", page: "KSPL", prefix: "VT", product: "เนเธเธเธฒเธขเธชเธเธญเธฃเนเธ•เนเธฅเธ—เน", cod: {158: 1, 258: 2, 456: 4}, type: "plain" },
-      { key: "VT_FACTORY_FLASHLIGHT", page: "เนเธเธเธฒเธขเนเธฃเธเธชเธนเธเธฃเธฒเธเธฒเนเธฃเธเธเธฒเธ เธชเนเธเธเธฃเธต", prefix: "VT", product: "เนเธเธเธฒเธขเธเธฑเธเธเนเธณ", cod: {147: 1, 224: 2}, type: "plain" },
-      { key: "PKSL", page: "PKSL", prefix: "VT", product: "เนเธเธเธฒเธขLN", cod: {158: 1, 258: 2}, type: "plain" },
-      { key: "VT_MASSAGE_SEAT", page: "เธชเธดเธเธเนเธฒเธซเธฅเธฑเธเธซเนเธฒเธ เธฃเธฒเธเธฒเธ–เธนเธเธ—เธตเนเธชเธธเธ”", prefix: "VT", product: "เน€เธเธฒเธฐเธเธงเธ”", cod: {349: 1, 590: 2}, type: "plain" },
-      { key: "VT_POWERBANK", page: "เนเธเธ•เธชเธณเธฃเธญเธเธกเธทเธญเธ–เธทเธญ", prefix: "VT", product: "M55", cod: {249: 1, 390: 2, 590: 3}, type: "color", colors: ["เธกเนเธงเธ", "เธ”เธณ", "เธเธฒเธง", "เธเธกเธเธน"], defaultColor: "เธ”เธณ" },
-      { key: "VT_OX_WATCH", page: "เธเธฒเธฌเธดเธเธฒเธฃเธฒเธเธฒเธชเนเธ", prefix: "VT", product: "เธเธฒเธฌเธดเธเธฒ OX", cod: {149: 2, 249: 4}, type: "color", colors: ["เธ”เธณ", "เธเนเธณเธ•เธฒเธฅ"], defaultColor: "เธ”เธณ" },
-      { key: "ONET", page: "ONET", prefix: "CM", product: "เนเธเนเธเธฅเนเธฒเน€เธเธฅเธฅเน", cod: {249: 2, 398: 4, 590: 6}, type: "plain" },
-      { key: "A9_CM", page: "เธเธฅเนเธญเธเธงเธเธเธฃเธเธดเธ”เธเธดเนเธงเนเธฃเนเธชเธฒเธข", prefix: "CM", product: "เธเธฅเนเธญเธ A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
-      { key: "GIMINI", page: "Gimini Shop", prefix: "CM", product: "เน€เธเนเธกเธเธฑเธ”เน€เธเนเธเธซเธเนเธฒเธ—เนเธญเธ", cod: {149: 2, 199: 4}, type: "size", sizes: ["L", "XL"], defaultColor: "XL" },
-      { key: "CHEAP_LEADING", page: "เธจเธนเธเธขเนเธฃเธงเธกเธชเธดเธเธเนเธฒเธเธฑเนเธเธเธณ เธฃเธฒเธเธฒเธ–เธนเธ", prefix: "CM", product: "เนเธเนเธเธฅเนเธฒเน€เธเธฅเธฅเนเน€เธซเธฅเธทเธญเธ", cod: {249: 1, 390: 2, 590: 3, 780: 4}, type: "plain" },
-      { key: "FACTORY_IMPORT", page: "เธชเธดเธเธเนเธฒเธเธณเน€เธเนเธฒเนเธฃเธเธเธฒเธ", prefix: "CM", product: "เนเธเนเธเธฅเนเธฒเน€เธเธฅเธฅเน", cod: {349: 2, 599: 4, 790: 6}, type: "plain" },
-      { key: "CM_FLASHLIGHT_WHOLESALE", page: "เนเธเธเธฒเธข เธฃเธฒเธเธฒเธชเนเธ", prefix: "CM", product: "เนเธเธเธฒเธขเธเธฑเธเธเนเธณ", cod: {149: 1, 224: 2}, type: "plain" },
+      { key: "VGSHOP", page: "Vgshop", prefix: "GA", product: "กล้อง A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
+      { key: "CHADA", page: "ชาด้า", prefix: "GA", product: "นาฬิกาMX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล", "เขียว", "เทา"], defaultColor: "ดำ" },
+      { key: "PREMIUM_WATCH", page: "นาฬิกาพรีเมี่ยม", prefix: "GA", product: "นาฬิกาMX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล", "เขียว", "เทา"], defaultColor: "ดำ" },
+      { key: "IT_CENTER", page: "ศูนย์รวมสินค้าไอที", prefix: "GA", product: "M55", cod: {249: 1, 390: 2}, type: "color", colors: ["ชมพู", "ม่วง", "ดำ", "ขาว"], defaultColor: "ดำ" },
+      { key: "LSHOP", page: "Lshop", prefix: "GA", product: "หูฟัง X1", cod: {149: 1, 199: 2}, type: "color", colors: ["ดำ", "ม่วง", "ฟ้า", "ครีม", "ชมพู", "ขาว"], defaultColor: "ดำ" },
+      { key: "KSPL", page: "KSPL", prefix: "VT", product: "ไฟฉายสปอร์ตไลท์", cod: {158: 1, 258: 2, 456: 4}, type: "plain" },
+      { key: "VT_FACTORY_FLASHLIGHT", page: "ไฟฉายแรงสูงราคาโรงงาน ส่งฟรี", prefix: "VT", product: "ไฟฉายกันน้ำ", cod: {147: 1, 224: 2}, type: "plain" },
+      { key: "PKSL", page: "PKSL", prefix: "VT", product: "ไฟฉายLN", cod: {158: 1, 258: 2}, type: "plain" },
+      { key: "VT_MASSAGE_SEAT", page: "สินค้าหลังห้าง ราคาถูกที่สุด", prefix: "VT", product: "เบาะนวด", cod: {349: 1, 590: 2}, type: "plain" },
+      { key: "VT_POWERBANK", page: "แบตสำรองมือถือ", prefix: "VT", product: "M55", cod: {249: 1, 390: 2, 590: 3}, type: "color", colors: ["ม่วง", "ดำ", "ขาว", "ชมพู"], defaultColor: "ดำ" },
+      { key: "VT_OX_WATCH", page: "นาฬิการาคาส่ง", prefix: "VT", product: "นาฬิกา OX", cod: {149: 2, 249: 4}, type: "color", colors: ["ดำ", "น้ำตาล"], defaultColor: "ดำ" },
+      { key: "ONET", page: "ONET", prefix: "CM", product: "ไฟโซล่าเซลล์", cod: {249: 2, 398: 4, 590: 6}, type: "plain" },
+      { key: "A9_CM", page: "กล้องวงจรปิดจิ๋วไร้สาย", prefix: "CM", product: "กล้อง A9", cod: {158: 1, 257: 2, 347: 3, 446: 4}, type: "plain" },
+      { key: "GIMINI", page: "Gimini Shop", prefix: "CM", product: "เข็มขัดเก็บหน้าท้อง", cod: {149: 2, 199: 4}, type: "size", sizes: ["L", "XL"], defaultColor: "XL" },
+      { key: "CHEAP_LEADING", page: "ศูนย์รวมสินค้าชั้นนำ ราคาถูก", prefix: "CM", product: "ไฟโซล่าเซลล์เหลือง", cod: {249: 1, 390: 2, 590: 3, 780: 4}, type: "plain" },
+      { key: "FACTORY_IMPORT", page: "สินค้านำเข้าโรงงาน", prefix: "CM", product: "ไฟโซล่าเซลล์", cod: {349: 2, 599: 4, 790: 6}, type: "plain" },
+      { key: "CM_FLASHLIGHT_WHOLESALE", page: "ไฟฉาย ราคาส่ง", prefix: "CM", product: "ไฟฉายกันน้ำ", cod: {149: 1, 224: 2}, type: "plain" },
     ];
 
     const $ = (id) => document.getElementById(id);
@@ -625,34 +625,34 @@
     let editingOrder = null;
     let activeGroup = null;
     const pageGroups = [
-      { key: "GA", name: "เนเธญเธ”เธกเธดเธเน€เธเธก", description: "" },
-      { key: "CM", name: "เนเธญเธ”เธกเธดเธเธเธฃเธตเธก", description: "" },
-      { key: "VT", name: "เนเธญเธ”เธกเธดเธเธงเธดเธ—เธขเน", description: "" }
+      { key: "GA", name: "แอดมินเกม", description: "" },
+      { key: "CM", name: "แอดมินครีม", description: "" },
+      { key: "VT", name: "แอดมินวิทย์", description: "" }
     ];
-    const thaiDigitMap = { "เน": "0", "เน‘": "1", "เน’": "2", "เน“": "3", "เน”": "4", "เน•": "5", "เน–": "6", "เน—": "7", "เน": "8", "เน": "9" };
+    const thaiDigitMap = { "๐": "0", "๑": "1", "๒": "2", "๓": "3", "๔": "4", "๕": "5", "๖": "6", "๗": "7", "๘": "8", "๙": "9" };
 
     const provinceNames = [
-      "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ", "เธเธฃเธธเธเน€เธ—เธ", "เธเธฃเธฐเธเธตเน", "เธเธฒเธเธเธเธเธธเธฃเธต", "เธเธฒเธฌเธชเธดเธเธเธธเน", "เธเธณเนเธเธเน€เธเธเธฃ", "เธเธญเธเนเธเนเธ", "เธเธฑเธเธ—เธเธธเธฃเธต",
-      "เธเธฐเน€เธเธดเธเน€เธ—เธฃเธฒ", "เธเธฅเธเธธเธฃเธต", "เธเธฑเธขเธเธฒเธ—", "เธเธฑเธขเธ เธนเธกเธด", "เธเธธเธกเธเธฃ", "เน€เธเธตเธขเธเธฃเธฒเธข", "เน€เธเธตเธขเธเนเธซเธกเน", "เธ•เธฃเธฑเธ", "เธ•เธฃเธฒเธ”", "เธ•เธฒเธ",
-      "เธเธเธฃเธเธฒเธขเธ", "เธเธเธฃเธเธเธก", "เธเธเธฃเธเธเธก", "เธเธเธฃเธฃเธฒเธเธชเธตเธกเธฒ", "เธเธเธฃเธจเธฃเธตเธเธฃเธฃเธกเธฃเธฒเธ", "เธเธเธฃเธชเธงเธฃเธฃเธเน", "เธเธเธ—เธเธธเธฃเธต", "เธเธฃเธฒเธเธดเธงเธฒเธช",
-      "เธเนเธฒเธ", "เธเธถเธเธเธฒเธฌ", "เธเธธเธฃเธตเธฃเธฑเธกเธขเน", "เธเธ—เธธเธกเธเธฒเธเธต", "เธเธฃเธฐเธเธงเธเธเธตเธฃเธตเธเธฑเธเธเน", "เธเธฃเธฒเธเธตเธเธเธธเธฃเธต", "เธเธฑเธ•เธ•เธฒเธเธต", "เธเธฃเธฐเธเธเธฃเธจเธฃเธตเธญเธขเธธเธเธขเธฒ",
-      "เธเธฐเน€เธขเธฒ", "เธเธฑเธเธเธฒ", "เธเธฑเธ—เธฅเธธเธ", "เธเธดเธเธดเธ•เธฃ", "เธเธดเธฉเธ“เธธเนเธฅเธ", "เน€เธเธเธฃเธเธธเธฃเธต", "เน€เธเธเธฃเธเธนเธฃเธ“เน", "เนเธเธฃเน", "เธ เธนเน€เธเนเธ•",
-      "เธกเธซเธฒเธชเธฒเธฃเธเธฒเธก", "เธกเธธเธเธ”เธฒเธซเธฒเธฃ", "เนเธกเนเธฎเนเธญเธเธชเธญเธ", "เธขเนเธชเธเธฃ", "เธขเธฐเธฅเธฒ", "เธฃเนเธญเธขเน€เธญเนเธ”", "เธฃเธฐเธเธญเธ", "เธฃเธฐเธขเธญเธ", "เธฃเธฒเธเธเธธเธฃเธต",
-      "เธฅเธเธเธธเธฃเธต", "เธฅเธณเธเธฒเธ", "เธฅเธณเธเธนเธ", "เน€เธฅเธข", "เธจเธฃเธตเธชเธฐเน€เธเธฉ", "เธชเธเธฅเธเธเธฃ", "เธชเธเธเธฅเธฒ", "เธชเธ•เธนเธฅ", "เธชเธกเธธเธ—เธฃเธเธฃเธฒเธเธฒเธฃ",
-      "เธชเธกเธธเธ—เธฃเธชเธเธเธฃเธฒเธก", "เธชเธกเธธเธ—เธฃเธชเธฒเธเธฃ", "เธชเธฃเธฐเนเธเนเธง", "เธชเธฃเธฐเธเธธเธฃเธต", "เธชเธดเธเธซเนเธเธธเธฃเธต", "เธชเธธเนเธเธ—เธฑเธข", "เธชเธธเธเธฃเธฃเธ“เธเธธเธฃเธต", "เธชเธธเธฃเธฒเธฉเธเธฃเนเธเธฒเธเธต",
-      "เธชเธธเธฃเธดเธเธ—เธฃเน", "เธซเธเธญเธเธเธฒเธข", "เธซเธเธญเธเธเธฑเธงเธฅเธณเธ เธน", "เธญเนเธฒเธเธ—เธญเธ", "เธญเธณเธเธฒเธเน€เธเธฃเธดเธ", "เธญเธธเธ”เธฃเธเธฒเธเธต", "เธญเธธเธ•เธฃเธ”เธดเธ•เธ–เน", "เธญเธธเธ—เธฑเธขเธเธฒเธเธต", "เธญเธธเธเธฅเธฃเธฒเธเธเธฒเธเธต"
+      "กรุงเทพมหานคร", "กรุงเทพ", "กระบี่", "กาญจนบุรี", "กาฬสินธุ์", "กำแพงเพชร", "ขอนแก่น", "จันทบุรี",
+      "ฉะเชิงเทรา", "ชลบุรี", "ชัยนาท", "ชัยภูมิ", "ชุมพร", "เชียงราย", "เชียงใหม่", "ตรัง", "ตราด", "ตาก",
+      "นครนายก", "นครปฐม", "นครพนม", "นครราชสีมา", "นครศรีธรรมราช", "นครสวรรค์", "นนทบุรี", "นราธิวาส",
+      "น่าน", "บึงกาฬ", "บุรีรัมย์", "ปทุมธานี", "ประจวบคีรีขันธ์", "ปราจีนบุรี", "ปัตตานี", "พระนครศรีอยุธยา",
+      "พะเยา", "พังงา", "พัทลุง", "พิจิตร", "พิษณุโลก", "เพชรบุรี", "เพชรบูรณ์", "แพร่", "ภูเก็ต",
+      "มหาสารคาม", "มุกดาหาร", "แม่ฮ่องสอน", "ยโสธร", "ยะลา", "ร้อยเอ็ด", "ระนอง", "ระยอง", "ราชบุรี",
+      "ลพบุรี", "ลำปาง", "ลำพูน", "เลย", "ศรีสะเกษ", "สกลนคร", "สงขลา", "สตูล", "สมุทรปราการ",
+      "สมุทรสงคราม", "สมุทรสาคร", "สระแก้ว", "สระบุรี", "สิงห์บุรี", "สุโขทัย", "สุพรรณบุรี", "สุราษฎร์ธานี",
+      "สุรินทร์", "หนองคาย", "หนองบัวลำภู", "อ่างทอง", "อำนาจเจริญ", "อุดรธานี", "อุตรดิตถ์", "อุทัยธานี", "อุบลราชธานี"
     ];
 
-    const canonicalProvinceNames = provinceNames.filter((name) => name !== "เธเธฃเธธเธเน€เธ—เธ");
+    const canonicalProvinceNames = provinceNames.filter((name) => name !== "กรุงเทพ");
     const provinceAliases = {
-      "เธเธ—เธก": "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ",
-      "เธเธฃเธธเธเน€เธ—เธ": "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ",
-      "เธเธเธเธธเธฃเธต": "เธเธฅเธเธธเธฃเธต",
-      "เธเธฅเธเธฃเธต": "เธเธฅเธเธธเธฃเธต",
-      "เธเธฅเธเธธเธฃ": "เธเธฅเธเธธเธฃเธต",
-      "เธเธเธฃเธจเธฃเธตเธเธฃเธฃเธกเธฃเธฒเธเน": "เธเธเธฃเธจเธฃเธตเธเธฃเธฃเธกเธฃเธฒเธ",
-      "เธชเธธเธฃเธฒเธฉเธเธฒเธเธต": "เธชเธธเธฃเธฒเธฉเธเธฃเนเธเธฒเธเธต",
-      "เธชเธธเธฃเธฒเธฉเธเธเธฒเธเธต": "เธชเธธเธฃเธฒเธฉเธเธฃเนเธเธฒเธเธต"
+      "กทม": "กรุงเทพมหานคร",
+      "กรุงเทพ": "กรุงเทพมหานคร",
+      "ชนบุรี": "ชลบุรี",
+      "ชลบรี": "ชลบุรี",
+      "ชลบุร": "ชลบุรี",
+      "นครศรีธรรมราช์": "นครศรีธรรมราช",
+      "สุราษธานี": "สุราษฎร์ธานี",
+      "สุราษฎธานี": "สุราษฎร์ธานี"
     };
     const thaiLocationDataUrls = [
       "thai_locations.json",
@@ -663,30 +663,30 @@
     let locationSuggestTimer = null;
 
     const fallbackLocationRows = [
-      { province: "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ", district: "เธเธ—เธธเธกเธงเธฑเธ", subdistrict: "เธเธ—เธธเธกเธงเธฑเธ", postalCode: "10330" },
-      { province: "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ", district: "เธเธ•เธธเธเธฑเธเธฃ", subdistrict: "เธเธฑเธเธ—เธฃเน€เธเธฉเธก", postalCode: "10900" },
-      { province: "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ", district: "เธชเธฐเธเธฒเธเธชเธนเธ", subdistrict: "เธชเธฐเธเธฒเธเธชเธนเธ", postalCode: "10240" },
-      { province: "เธเธฅเธเธธเธฃเธต", district: "เน€เธกเธทเธญเธเธเธฅเธเธธเธฃเธต", subdistrict: "เธเนเธฒเธเธชเธงเธ", postalCode: "20000" },
-      { province: "เธเธฅเธเธธเธฃเธต", district: "เธเนเธญเธ—เธญเธ", subdistrict: "เธเนเธญเธ—เธญเธ", postalCode: "20270" },
-      { province: "เธเธฅเธเธธเธฃเธต", district: "เธเนเธฒเธเธเธถเธ", subdistrict: "เธซเธเธญเธเธเธญเธเนเธ”เธ", postalCode: "20170" },
-      { province: "เธฃเธฐเธขเธญเธ", district: "เธเนเธฒเธเธเนเธฒเธข", subdistrict: "เธซเธเธญเธเธฅเธฐเธฅเธญเธ", postalCode: "21120" },
-      { province: "เธฃเธฐเธขเธญเธ", district: "เน€เธกเธทเธญเธเธฃเธฐเธขเธญเธ", subdistrict: "เธซเนเธงเธขเนเธเนเธ", postalCode: "21150" },
-      { province: "เธญเธธเธ”เธฃเธเธฒเธเธต", district: "เน€เธกเธทเธญเธเธญเธธเธ”เธฃเธเธฒเธเธต", subdistrict: "เธซเธกเธฒเธเนเธเนเธ", postalCode: "41000" },
-      { province: "เธชเธกเธธเธ—เธฃเธเธฃเธฒเธเธฒเธฃ", district: "เน€เธกเธทเธญเธเธชเธกเธธเธ—เธฃเธเธฃเธฒเธเธฒเธฃ", subdistrict: "เธ—เนเธฒเธขเธเนเธฒเธ", postalCode: "10270" },
-      { province: "เธชเธเธเธฅเธฒ", district: "เน€เธกเธทเธญเธเธชเธเธเธฅเธฒ", subdistrict: "เธเธฐเธงเธ", postalCode: "90100" },
-      { province: "เธ เธนเน€เธเนเธ•", district: "เธ–เธฅเธฒเธ", subdistrict: "เน€เธ—เธเธเธฃเธฐเธฉเธฑเธ•เธฃเธต", postalCode: "83110" },
-      { province: "เน€เธเธตเธขเธเนเธซเธกเน", district: "เธชเธฑเธเธเนเธฒเธ•เธญเธ", subdistrict: "เธ—เธธเนเธเธ•เนเธญเธก", postalCode: "50120" },
-      { province: "เธเธฃเธฒเธเธดเธงเธฒเธช", district: "เธฃเธฐเนเธเธฐ", subdistrict: "เธ•เธฑเธเธซเธขเธเธกเธฑเธช", postalCode: "96130" },
-      { province: "เธเธฑเธขเธ เธนเธกเธด", district: "เน€เธเธฉเธ•เธฃเธชเธกเธเธนเธฃเธ“เน", subdistrict: "", postalCode: "" },
-      { province: "เธเธฑเธ•เธ•เธฒเธเธต", district: "เธกเธฒเธขเธญ", subdistrict: "เธชเธฒเธเธญเธเธ", postalCode: "94140" }
+      { province: "กรุงเทพมหานคร", district: "ปทุมวัน", subdistrict: "ปทุมวัน", postalCode: "10330" },
+      { province: "กรุงเทพมหานคร", district: "จตุจักร", subdistrict: "จันทรเกษม", postalCode: "10900" },
+      { province: "กรุงเทพมหานคร", district: "สะพานสูง", subdistrict: "สะพานสูง", postalCode: "10240" },
+      { province: "ชลบุรี", district: "เมืองชลบุรี", subdistrict: "บ้านสวน", postalCode: "20000" },
+      { province: "ชลบุรี", district: "บ่อทอง", subdistrict: "บ่อทอง", postalCode: "20270" },
+      { province: "ชลบุรี", district: "บ้านบึง", subdistrict: "หนองบอนแดง", postalCode: "20170" },
+      { province: "ระยอง", district: "บ้านค่าย", subdistrict: "หนองละลอก", postalCode: "21120" },
+      { province: "ระยอง", district: "เมืองระยอง", subdistrict: "ห้วยโป่ง", postalCode: "21150" },
+      { province: "อุดรธานี", district: "เมืองอุดรธานี", subdistrict: "หมากแข้ง", postalCode: "41000" },
+      { province: "สมุทรปราการ", district: "เมืองสมุทรปราการ", subdistrict: "ท้ายบ้าน", postalCode: "10270" },
+      { province: "สงขลา", district: "เมืองสงขลา", subdistrict: "พะวง", postalCode: "90100" },
+      { province: "ภูเก็ต", district: "ถลาง", subdistrict: "เทพกระษัตรี", postalCode: "83110" },
+      { province: "เชียงใหม่", district: "สันป่าตอง", subdistrict: "ทุ่งต้อม", postalCode: "50120" },
+      { province: "นราธิวาส", district: "ระแงะ", subdistrict: "ตันหยงมัส", postalCode: "96130" },
+      { province: "ชัยภูมิ", district: "เกษตรสมบูรณ์", subdistrict: "", postalCode: "" },
+      { province: "ปัตตานี", district: "มายอ", subdistrict: "สาคอบน", postalCode: "94140" }
     ];
 
     function normalizeDigits(text) {
-      return text.replace(/[เน-เน]/g, (d) => thaiDigitMap[d] || d);
+      return text.replace(/[๐-๙]/g, (d) => thaiDigitMap[d] || d);
     }
 
     function compactThai(text) {
-      return String(text || "").replace(/เธเธฑเธเธซเธงเธฑเธ”|เธ\.|[\s.]/g, "");
+      return String(text || "").replace(/จังหวัด|จ\.|[\s.]/g, "");
     }
 
     function editDistance(a, b) {
@@ -734,7 +734,7 @@
 
     function compactAddressPart(text) {
       return compactThai(text)
-        .replace(/เธ•เธณเธเธฅ|เธญเธณเน€เธ เธญ|เธเธฑเธเธซเธงเธฑเธ”|เนเธเธงเธ|เน€เธเธ•|เธฃเธซเธฑเธช|เนเธเธฃเธฉเธ“เธตเธขเน/g, "")
+        .replace(/ตำบล|อำเภอ|จังหวัด|แขวง|เขต|รหัส|ไปรษณีย์/g, "")
         .replace(/\d{5}/g, "");
     }
 
@@ -841,10 +841,10 @@
     }
 
     function formatLocationRow(row) {
-      const isBangkok = row.province === "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ";
-      const subdistrict = row.subdistrict ? `${isBangkok ? "เนเธเธงเธ" : "เธ•."}${row.subdistrict}` : "";
-      const district = row.district ? `${isBangkok ? "เน€เธเธ•" : "เธญ."}${row.district}` : "";
-      const province = row.province ? `${isBangkok ? "" : "เธ."}${row.province}` : "";
+      const isBangkok = row.province === "กรุงเทพมหานคร";
+      const subdistrict = row.subdistrict ? `${isBangkok ? "แขวง" : "ต."}${row.subdistrict}` : "";
+      const district = row.district ? `${isBangkok ? "เขต" : "อ."}${row.district}` : "";
+      const province = row.province ? `${isBangkok ? "" : "จ."}${row.province}` : "";
       return [subdistrict, district, province, row.postalCode].filter(Boolean).join(" ");
     }
 
@@ -864,12 +864,12 @@
       const phone = extractPhone(text);
       if (phone) text = text.replace(new RegExp(escapeRegExp(phone), "g"), "");
       text = text.replace(/\b\d{5}\b/g, "");
-      text = text.replace(/\s*(เน€เธเนเธเน€เธเธดเธเธเธฅเธฒเธขเธ—เธฒเธ|เธเธณเธฃเธฐเน€เธเธดเธเธเธฅเธฒเธขเธ—เธฒเธ|เธเธฅเธฒเธขเธ—เธฒเธ)\s*$/g, "");
+      text = text.replace(/\s*(เก็บเงินปลายทาง|ชำระเงินปลายทาง|ปลายทาง)\s*$/g, "");
 
       const locationChunks = [
-        /(?:เธ•เธณเธเธฅ|เธ•\.|เนเธเธงเธ)\s*[เธ-เธฎเธฐ-เน]{2,30}/g,
-        /(?:เธญเธณเน€เธ เธญ|เธญ\.|เน€เธเธ•)\s*[เธ-เธฎเธฐ-เน]{2,30}/g,
-        /(?:เธเธฑเธเธซเธงเธฑเธ”|เธ\.)\s*[เธ-เธฎเธฐ-เน]{2,30}/g
+        /(?:ตำบล|ต\.|แขวง)\s*[ก-ฮะ-์]{2,30}/g,
+        /(?:อำเภอ|อ\.|เขต)\s*[ก-ฮะ-์]{2,30}/g,
+        /(?:จังหวัด|จ\.)\s*[ก-ฮะ-์]{2,30}/g
       ];
       locationChunks.forEach((pattern) => {
         text = text.replace(pattern, " ");
@@ -879,7 +879,7 @@
         text = text.replace(new RegExp(escapeRegExp(name), "g"), " ");
       });
 
-      text = text.replace(/^[เธ-เธฎเธฐ-เนA-Za-z.'\s]{2,60}[.,]\s*(?=.*\d)/, "");
+      text = text.replace(/^[ก-ฮะ-์A-Za-z.'\s]{2,60}[.,]\s*(?=.*\d)/, "");
       return text.replace(/\s+/g, " ").trim();
     }
 
@@ -937,7 +937,7 @@
 
       const head = document.createElement("div");
       head.className = "suggestion-head";
-      head.textContent = "เน€เธฅเธทเธญเธเธ•เธณเธเธฅ/เธญเธณเน€เธ เธญ/เธเธฑเธเธซเธงเธฑเธ”เธ—เธตเนเธ•เธฃเธเธเธฑเธเธฅเธนเธเธเนเธฒ";
+      head.textContent = "เลือกตำบล/อำเภอ/จังหวัดที่ตรงกับลูกค้า";
       box.appendChild(head);
 
       suggestions.forEach(({ row }) => {
@@ -962,9 +962,9 @@
     function locationPartsFromAddress(address, row = null) {
       const normalized = normalizeAddressText(address);
       const compact = compactAddressPart(normalized);
-      const hasSubdistrictByText = /(เธ•\.|เธ•เธณเธเธฅ|เนเธเธงเธ)/.test(normalized);
-      const hasDistrictByText = /(เธญ\.|เธญเธณเน€เธ เธญ|เน€เธเธ•)/.test(normalized);
-      const hasProvinceByText = /(เธ\.|เธเธฑเธเธซเธงเธฑเธ”|เธเธฃเธธเธเน€เธ—เธ|เธเธ—เธก)/.test(normalized) || provinceNames.some((p) => compactThai(p) && compact.includes(compactThai(p)));
+      const hasSubdistrictByText = /(ต\.|ตำบล|แขวง)/.test(normalized);
+      const hasDistrictByText = /(อ\.|อำเภอ|เขต)/.test(normalized);
+      const hasProvinceByText = /(จ\.|จังหวัด|กรุงเทพ|กทม)/.test(normalized) || provinceNames.some((p) => compactThai(p) && compact.includes(compactThai(p)));
       const rowMatch = row || findBestLocationRow(normalized, fallbackLocationRows)?.row;
       return {
         hasSubdistrict: hasSubdistrictByText || Boolean(rowMatch?.subdistrict && compact.includes(compactThai(rowMatch.subdistrict))),
@@ -981,11 +981,11 @@
       if (!match) return value;
 
       const { row } = match;
-      const isBangkok = row.province === "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ";
-      value = prefixLocationName(value, row.subdistrict, isBangkok ? "เนเธเธงเธ" : "เธ•");
-      value = prefixLocationName(value, row.district, isBangkok ? "เน€เธเธ•" : "เธญ");
-      if (row.province && !/(เธ\.|เธเธฑเธเธซเธงเธฑเธ”|เธเธฃเธธเธเน€เธ—เธ|เธเธ—เธก)/.test(value) && !value.includes(row.province)) {
-        value = `${value} ${isBangkok ? row.province : `เธ.${row.province}`}`;
+      const isBangkok = row.province === "กรุงเทพมหานคร";
+      value = prefixLocationName(value, row.subdistrict, isBangkok ? "แขวง" : "ต");
+      value = prefixLocationName(value, row.district, isBangkok ? "เขต" : "อ");
+      if (row.province && !/(จ\.|จังหวัด|กรุงเทพ|กทม)/.test(value) && !value.includes(row.province)) {
+        value = `${value} ${isBangkok ? row.province : `จ.${row.province}`}`;
       }
       if (row.postalCode && !/\b\d{5}\b/.test(value)) value = `${value} ${row.postalCode}`;
       return normalizeProvinceTypos(value).replace(/\s+/g, " ").trim();
@@ -993,9 +993,9 @@
 
     function hasClearHouseNumber(address) {
       const value = normalizeAddressText(address);
-      if (/(เธเนเธฒเธเน€เธฅเธเธ—เธตเน|เน€เธฅเธเธ—เธตเน)\s*\d{1,5}/.test(value)) return true;
-      if (/(^|\s)\d{1,5}(\/\d{1,5})?([-\s]|$)/.test(value) && !/(^|\s)(เธก\.|เธซเธกเธนเน)\s*\d/.test(value)) return true;
-      return /(^|\s)\d{1,5}(\/\d{1,5})?\s*(เธซเธกเธนเน|เธก\.|เธเธญเธข|เธ–เธเธ|เธ•\.|เธ•เธณเธเธฅ|เนเธเธงเธ|เธญ\.|เธญเธณเน€เธ เธญ|เน€เธเธ•|เธ\.|เธเธฑเธเธซเธงเธฑเธ”)/.test(value);
+      if (/(บ้านเลขที่|เลขที่)\s*\d{1,5}/.test(value)) return true;
+      if (/(^|\s)\d{1,5}(\/\d{1,5})?([-\s]|$)/.test(value) && !/(^|\s)(ม\.|หมู่)\s*\d/.test(value)) return true;
+      return /(^|\s)\d{1,5}(\/\d{1,5})?\s*(หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด)/.test(value);
     }
 
     function orderSignature(text) {
@@ -1025,25 +1025,25 @@
       Object.entries(provinceAliases).forEach(([wrong, correct]) => {
         value = value.replace(new RegExp(wrong, "g"), correct);
       });
-      value = value.replace(/เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃเธกเธซเธฒเธเธเธฃ/g, "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ");
-      value = value.replace(/เธเธฃเธฐเธเธเธฃเธจเธฃเธต(?:เธเธฃเธฐเธเธเธฃเธจเธฃเธต)+เธญเธขเธธเธเธขเธฒ/g, "เธเธฃเธฐเธเธเธฃเธจเธฃเธตเธญเธขเธธเธเธขเธฒ");
-      value = value.replace(/(^|[\s,])(?:เธ\.|เธเธฑเธเธซเธงเธฑเธ”)?\s*เธญเธขเธธเธเธขเธฒ(?=\s|,|\d{5}|$)/g, "$1เธ.เธเธฃเธฐเธเธเธฃเธจเธฃเธตเธญเธขเธธเธเธขเธฒ");
-      value = value.replace(/(เธ\.|เธเธฑเธเธซเธงเธฑเธ”)\s*([เธ-เธฎเธฐ-เน]{3,24})/g, (match, prefix, name) => {
+      value = value.replace(/กรุงเทพมหานครมหานคร/g, "กรุงเทพมหานคร");
+      value = value.replace(/พระนครศรี(?:พระนครศรี)+อยุธยา/g, "พระนครศรีอยุธยา");
+      value = value.replace(/(^|[\s,])(?:จ\.|จังหวัด)?\s*อยุธยา(?=\s|,|\d{5}|$)/g, "$1จ.พระนครศรีอยุธยา");
+      value = value.replace(/(จ\.|จังหวัด)\s*([ก-ฮะ-์]{3,24})/g, (match, prefix, name) => {
         const fixed = closestProvince(name);
         return fixed ? `${prefix}${fixed}` : match;
       });
-      value = value.replace(/เธเธฃเธฐเธเธเธฃเธจเธฃเธต(?:เธเธฃเธฐเธเธเธฃเธจเธฃเธต)+เธญเธขเธธเธเธขเธฒ/g, "เธเธฃเธฐเธเธเธฃเธจเธฃเธตเธญเธขเธธเธเธขเธฒ");
+      value = value.replace(/พระนครศรี(?:พระนครศรี)+อยุธยา/g, "พระนครศรีอยุธยา");
       return value;
     }
 
     function normalizeAddressText(text) {
       let value = normalizeDigits(String(text || ""));
-      value = value.replace(/(^|\s)(?:เธ•เธณเธเธฅ|เธ•\.?|เธ•)\s*([เธ-เธฎเธฐ-เน]{2,})/g, "$1เธ•.$2");
-      value = value.replace(/(^|\s)(?:เธญเธณเน€เธ เธญ|เธญ\.?|เธญ)\s*([เธ-เธฎเธฐ-เน]{2,})/g, "$1เธญ.$2");
-      value = value.replace(/(^|\s)(?:เธเธฑเธเธซเธงเธฑเธ”|เธ\.?|เธ)\s*([เธ-เธฎเธฐ-เน]{2,})/g, "$1เธ.$2");
-      value = value.replace(/เธ•\.\.+/g, "เธ•.");
-      value = value.replace(/เธญ\.\.+/g, "เธญ.");
-      value = value.replace(/เธ\.\.+/g, "เธ.");
+      value = value.replace(/(^|\s)(?:ตำบล|ต\.?|ต)\s*([ก-ฮะ-์]{2,})/g, "$1ต.$2");
+      value = value.replace(/(^|\s)(?:อำเภอ|อ\.?|อ)\s*([ก-ฮะ-์]{2,})/g, "$1อ.$2");
+      value = value.replace(/(^|\s)(?:จังหวัด|จ\.?|จ)\s*([ก-ฮะ-์]{2,})/g, "$1จ.$2");
+      value = value.replace(/ต\.\.+/g, "ต.");
+      value = value.replace(/อ\.\.+/g, "อ.");
+      value = value.replace(/จ\.\.+/g, "จ.");
       value = normalizeProvinceTypos(value);
       return value.replace(/\s+/g, " ").trim();
     }
@@ -1085,7 +1085,7 @@
       document.body.classList.remove("admin-locked");
       $("adminGate").style.display = "none";
       const topbarNote = document.querySelector(".topbar .small");
-      if (topbarNote) topbarNote.textContent = `เธเธฅเธธเนเธกเน€เธเธ: ${activeGroup.name}`;
+      if (topbarNote) topbarNote.textContent = `กลุ่มเพจ: ${activeGroup.name}`;
       renderPageSelect();
       const firstPage = visiblePages()[0];
       if (firstPage) {
@@ -1138,7 +1138,7 @@
       Object.entries(page.cod).forEach(([cod, qty]) => {
         const option = document.createElement("option");
         option.value = cod;
-        option.textContent = `${cod} = ${qty} เธเธธเธ”`;
+        option.textContent = `${cod} = ${qty} ชุด`;
         $("price").appendChild(option);
       });
 
@@ -1187,7 +1187,7 @@
         return;
       }
 
-      $("optionLabel").textContent = page.type === "size" ? "เนเธเธเน" : "เธชเธต";
+      $("optionLabel").textContent = page.type === "size" ? "ไซซ์" : "สี";
       const inputType = page.type === "size" ? "radio" : "checkbox";
       const name = page.type === "size" ? "sizeChoice" : `colorChoice-${page.key}`;
 
@@ -1216,15 +1216,15 @@
       });
     }
 
-    const addressStartPattern = /(?:เธเนเธฒเธเน€เธฅเธเธ—เธตเน|เน€เธฅเธเธ—เธตเน|เธซเธกเธนเนเธเนเธฒเธ|เธญเธฒเธเธฒเธฃ|เธซเธญเธเธฑเธ|เธฃเนเธฒเธ|เธ•เธฅเธฒเธ”|เธเธฑเนเธก|เธเธ•เธ—|เธเธฃเธดเธฉเธฑเธ—|เนเธฃเธเธเธฒเธ|เธ–เธเธ|เธเธญเธข|เธ•\.|เธ•เธณเธเธฅ|เนเธเธงเธ|เธญ\.|เธญเธณเน€เธ เธญ|เน€เธเธ•|เธ\.|เธเธฑเธเธซเธงเธฑเธ”|\d{1,5}(?:\/\d{1,5})?)/;
-    const addressNoisePattern = /(เนเธเธฃ|เนเธ–เธก|เธชเนเธเธเธฃเธต|เธเนเธฒเธชเนเธ|เธเธญเธเธเธธเธ“|เธเธณเธชเธฑเนเธเธเธทเนเธญ|เธฃเธฑเธเธ—เธฃเธฒเธ|เนเธญเธ”เธกเธดเธ|เธชเธตเนเธซเธเธ”เธต|เธฃเธฑเธเธชเธต|เธกเธตเธชเธต|เธเธธเธ”เน€เธฅเธข|เธขเธญเธ”เธฃเธงเธก|เธฃเธฒเธเธฒ|เธเธฒเธ—|COD|เธเธญเธเธทเนเธญ|เนเธเนเธเธเธทเนเธญ|เน€เธเธญเธฃเนเนเธ—เธฃเธ—เธตเนเนเธเนเธ|เธเธณเธฃเธฐเน€เธเธดเธ|เน€เธเนเธเน€เธเธดเธเธเธฅเธฒเธขเธ—เธฒเธ|เธชเนเธเนเธ”เธข|เธเธดเธ”|close)/;
+    const addressStartPattern = /(?:บ้านเลขที่|เลขที่|หมู่บ้าน|อาคาร|หอพัก|ร้าน|ตลาด|ปั๊ม|ปตท|บริษัท|โรงงาน|ถนน|ซอย|ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด|\d{1,5}(?:\/\d{1,5})?)/;
+    const addressNoisePattern = /(โปร|แถม|ส่งฟรี|ค่าส่ง|ขอบคุณ|คำสั่งซื้อ|รับทราบ|แอดมิน|สีไหนดี|รับสี|มีสี|ชุดเลย|ยอดรวม|ราคา|บาท|COD|ขอชื่อ|แจ้งชื่อ|เบอร์โทรที่แจ้ง|ชำระเงิน|เก็บเงินปลายทาง|ส่งโดย|ปิด|close)/;
 
     function cleanAddressForOrder(address) {
       let value = normalizeAddressText(address || "");
       value = value.replace(/\b0[689][\d\-\s().]{7,20}/g, " ");
-      value = value.replace(/(?:เนเธ—เธฃ|เน€เธเธญเธฃเน|เน€เธเธญเธฃเนเนเธ—เธฃ|เนเธ—เธฃเธจเธฑเธเธ—เน)\s*[:๏ผ.]?\s*$/g, " ");
-      value = value.replace(/(?:COD|เธเธณเธชเธฑเนเธเธเธทเนเธญ|เธขเธญเธ”เธฃเธงเธก|เธขเธญเธ”)\s*[:๏ผ.]?\s*\d{2,5}/gi, " ");
-      value = value.replace(/\b\d{2,5}\s*เธเธฒเธ—\b/g, " ");
+      value = value.replace(/(?:โทร|เบอร์|เบอร์โทร|โทรศัพท์)\s*[:：.]?\s*$/g, " ");
+      value = value.replace(/(?:COD|คำสั่งซื้อ|ยอดรวม|ยอด)\s*[:：.]?\s*\d{2,5}/gi, " ");
+      value = value.replace(/\b\d{2,5}\s*บาท\b/g, " ");
 
       const startMatch = value.match(addressStartPattern);
       if (startMatch && startMatch.index > 0) {
@@ -1234,8 +1234,8 @@
         }
       }
 
-      value = value.replace(/^(?:เธฃเธฑเธเธชเธต.*?|.*?เธเธญเธเธทเนเธญ.*?|.*?เนเธเนเธเธเธทเนเธญ.*?)(?=(เธเนเธฒเธเน€เธฅเธเธ—เธตเน|เน€เธฅเธเธ—เธตเน|เธซเธกเธนเนเธเนเธฒเธ|เธญเธฒเธเธฒเธฃ|เธซเธญเธเธฑเธ|เธฃเนเธฒเธ|เธ•เธฅเธฒเธ”|เธเธฑเนเธก|เธเธ•เธ—|เธเธฃเธดเธฉเธฑเธ—|เนเธฃเธเธเธฒเธ|เธ–เธเธ|เธเธญเธข|เธ•\.|เธ•เธณเธเธฅ|เนเธเธงเธ|เธญ\.|เธญเธณเน€เธ เธญ|เน€เธเธ•|เธ\.|เธเธฑเธเธซเธงเธฑเธ”|\d))/g, "");
-      value = value.replace(/\s+(?:เธฃเธฑเธเธชเธต|เธชเธตเนเธซเธเธ”เธต|เนเธเธฃ|เธขเธญเธ”เธฃเธงเธก|เธเธญเธเธเธธเธ“|เนเธเนเธเธเธทเนเธญ|เธเธญเธเธทเนเธญ|เนเธญเธ”เธกเธดเธ|เธเธณเธชเธฑเนเธเธเธทเนเธญ|เธฃเธฑเธเธ—เธฃเธฒเธ|เธชเนเธเนเธ”เธข|เธฃเธฒเธเธฒ|เธเธฒเธ—|เธเธณเธฃเธฐเน€เธเธดเธ|เน€เธเนเธเน€เธเธดเธเธเธฅเธฒเธขเธ—เธฒเธ|เธเธดเธ”|close).*$/g, "");
+      value = value.replace(/^(?:รับสี.*?|.*?ขอชื่อ.*?|.*?แจ้งชื่อ.*?)(?=(บ้านเลขที่|เลขที่|หมู่บ้าน|อาคาร|หอพัก|ร้าน|ตลาด|ปั๊ม|ปตท|บริษัท|โรงงาน|ถนน|ซอย|ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด|\d))/g, "");
+      value = value.replace(/\s+(?:รับสี|สีไหนดี|โปร|ยอดรวม|ขอบคุณ|แจ้งชื่อ|ขอชื่อ|แอดมิน|คำสั่งซื้อ|รับทราบ|ส่งโดย|ราคา|บาท|ชำระเงิน|เก็บเงินปลายทาง|ปิด|close).*$/g, "");
       value = cleanAddressLine(value);
       return value.replace(/\s+/g, " ").trim();
     }
@@ -1243,49 +1243,49 @@
     function suspiciousAddressReasons(address) {
       const value = normalizeAddressText(address || "");
       const reasons = [];
-      if (addressNoisePattern.test(value)) reasons.push("เธ—เธตเนเธญเธขเธนเนเธขเธฑเธเธกเธตเธเนเธญเธเธงเธฒเธกเธ—เธตเนเธญเธฒเธเนเธกเนเนเธเนเธ—เธตเนเธญเธขเธนเนเธเธเธญเธขเธนเน");
-      if (value.length > 180) reasons.push("เธ—เธตเนเธญเธขเธนเนเธขเธฒเธงเธเธดเธ”เธเธเธ•เธด เธเธงเธฃเน€เธเนเธเธเนเธญเธเธชเธฃเนเธฒเธ");
+      if (addressNoisePattern.test(value)) reasons.push("ที่อยู่ยังมีข้อความที่อาจไม่ใช่ที่อยู่ปนอยู่");
+      if (value.length > 180) reasons.push("ที่อยู่ยาวผิดปกติ ควรเช็คก่อนสร้าง");
       return reasons;
     }
 
     function cleanAddressLine(line) {
       let value = normalizeAddressText(line.trim());
-      if (!/(เธซเธกเธนเนเธเนเธฒเธ|เธเนเธฒเธเน€เธฅเธเธ—เธตเน|เน€เธฅเธเธ—เธตเน|เธซเธกเธนเน|เธก\.|เธเธญเธข|เธ–เธเธ|เธ•\.|เธ•เธณเธเธฅ|เธญ\.|เธญเธณเน€เธ เธญ|เธ\.|เธเธฑเธเธซเธงเธฑเธ”|เน€เธเธ•|เนเธเธงเธ|เธฃเธซเธฑเธช)/.test(value)) {
+      if (!/(หมู่บ้าน|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(value)) {
         value = value.replace(/^[^\d]{2,80}(?=\d)/g, "");
       }
       value = value.replace(/\b0[689][\d\-\s().]{7,20}/g, "");
-      value = value.replace(/(?:เนเธ—เธฃ|เน€เธเธญเธฃเน|เน€เธเธญเธฃเนเนเธ—เธฃ|เนเธ—เธฃเธจเธฑเธเธ—เน)\s*[:๏ผ.]?\s*$/g, "");
-      value = value.replace(/\s*(เน€เธเนเธเน€เธเธดเธเธเธฅเธฒเธขเธ—เธฒเธ|เธเธณเธฃเธฐเน€เธเธดเธเธเธฅเธฒเธขเธ—เธฒเธ|เธเธฅเธฒเธขเธ—เธฒเธ)\s*$/g, "");
-      value = value.replace(/^เธเธทเนเธญ\s*[-/]?\s*เธ—เธตเนเธญเธขเธนเนเธเธฑเธ”เธชเนเธ\s*[:๏ผ]?\s*/g, "");
-      value = value.replace(/^เธเธทเนเธญ\s*[-/]?\s*เธ—เธตเนเธญเธขเธนเน\s*[:๏ผ]?\s*/g, "");
-      value = value.replace(/^เธ—เธตเนเธญเธขเธนเน\s*[:๏ผ]?\s*/g, "");
-      value = value.replace(/^เธเธฑเธ”เธชเนเธ(?:เนเธ)?เธ—เธตเน\s*/g, "");
-      value = value.replace(/^เธเธทเนเธญ\s+.*?(?=\d)/g, "");
-      value = value.replace(/(?<=\d)เธก(?=\d)/g, " เธก.");
-      value = value.replace(/(?<=\d)เธ•\s*/g, " เธ•.");
-      value = value.replace(/เธ•(?=เนเธ)/g, " เธ•.");
-      value = value.replace(/เธญ(?=เน€เธกเธท)/g, " เธญ.");
+      value = value.replace(/(?:โทร|เบอร์|เบอร์โทร|โทรศัพท์)\s*[:：.]?\s*$/g, "");
+      value = value.replace(/\s*(เก็บเงินปลายทาง|ชำระเงินปลายทาง|ปลายทาง)\s*$/g, "");
+      value = value.replace(/^ชื่อ\s*[-/]?\s*ที่อยู่จัดส่ง\s*[:：]?\s*/g, "");
+      value = value.replace(/^ชื่อ\s*[-/]?\s*ที่อยู่\s*[:：]?\s*/g, "");
+      value = value.replace(/^ที่อยู่\s*[:：]?\s*/g, "");
+      value = value.replace(/^จัดส่ง(?:ไป)?ที่\s*/g, "");
+      value = value.replace(/^ชื่อ\s+.*?(?=\d)/g, "");
+      value = value.replace(/(?<=\d)ม(?=\d)/g, " ม.");
+      value = value.replace(/(?<=\d)ต\s*/g, " ต.");
+      value = value.replace(/ต(?=ใน)/g, " ต.");
+      value = value.replace(/อ(?=เมื)/g, " อ.");
       provinceNames.forEach((province) => {
-        if (province !== "เธเธฃเธธเธเน€เธ—เธ" && province !== "เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ") {
-          value = value.replace(new RegExp(`เธ(?=${province})`, "g"), " เธ.");
+        if (province !== "กรุงเทพ" && province !== "กรุงเทพมหานคร") {
+          value = value.replace(new RegExp(`จ(?=${province})`, "g"), " จ.");
         }
       });
-      value = value.replace(/(^|\s)เธ•\s+/g, "$1เธ•.");
-      value = value.replace(/(^|\s)เธญ\s+/g, "$1เธญ.");
-      value = value.replace(/(^|\s)เธ\s+/g, "$1เธ.");
+      value = value.replace(/(^|\s)ต\s+/g, "$1ต.");
+      value = value.replace(/(^|\s)อ\s+/g, "$1อ.");
+      value = value.replace(/(^|\s)จ\s+/g, "$1จ.");
       value = normalizeAddressText(value);
       return value.replace(/\s+/g, " ").trim();
     }
 
     function addressScore(line) {
       if (!line) return 0;
-      const bad = ["เนเธเธฃ", "เนเธ–เธก", "เธชเนเธเธเธฃเธต", "เธเนเธฒเธชเนเธ", "เธเธญเธเธเธธเธ“", "เธเธณเธชเธฑเนเธเธเธทเนเธญ", "เธฃเธฑเธเธ—เธฃเธฒเธ", "เนเธญเธ”เธกเธดเธ", "เธชเธตเนเธซเธเธ”เธต", "เธฃเธฑเธเธชเธต", "เธกเธตเธชเธต", "เธเธธเธ”เน€เธฅเธข"];
+      const bad = ["โปร", "แถม", "ส่งฟรี", "ค่าส่ง", "ขอบคุณ", "คำสั่งซื้อ", "รับทราบ", "แอดมิน", "สีไหนดี", "รับสี", "มีสี", "ชุดเลย"];
       if (bad.some((word) => line.includes(word))) return 0;
 
       let score = 0;
       if (/\d/.test(line)) score += 1;
       if (/\b\d{5}\b/.test(line)) score += 2;
-      ["เธซเธกเธนเนเธเนเธฒเธ", "เธเนเธฒเธเน€เธฅเธเธ—เธตเน", "เน€เธฅเธเธ—เธตเน", "เธซเธกเธนเน", "เธก.", "เธเธญเธข", "เธ–เธเธ", "เธ•.", "เธ•เธณเธเธฅ", "เธญ.", "เธญเธณเน€เธ เธญ", "เธ.", "เธเธฑเธเธซเธงเธฑเธ”", "เน€เธเธ•", "เนเธเธงเธ"].forEach((word) => {
+      ["หมู่บ้าน", "บ้านเลขที่", "เลขที่", "หมู่", "ม.", "ซอย", "ถนน", "ต.", "ตำบล", "อ.", "อำเภอ", "จ.", "จังหวัด", "เขต", "แขวง"].forEach((word) => {
         if (line.includes(word)) score += 2;
       });
       if (provinceNames.some((p) => line.includes(p))) score += 3;
@@ -1306,9 +1306,9 @@
 
     function extractCod(text) {
       const normalized = normalizeDigits(text);
-      const orderMatch = normalized.match(/(?:เธเธณเธชเธฑเนเธเธเธทเนเธญ|COD|เธขเธญเธ”เธฃเธงเธก|เธขเธญเธ”)\D{0,20}(\d{3,4})/i);
+      const orderMatch = normalized.match(/(?:คำสั่งซื้อ|COD|ยอดรวม|ยอด)\D{0,20}(\d{3,4})/i);
       if (orderMatch) return orderMatch[1];
-      const moneyMatches = [...normalized.matchAll(/เธฟ\s*(\d{3,4})|\b(\d{3,4})\s*เธเธฒเธ—/g)];
+      const moneyMatches = [...normalized.matchAll(/฿\s*(\d{3,4})|\b(\d{3,4})\s*บาท/g)];
       if (moneyMatches.length) return moneyMatches[moneyMatches.length - 1][1] || moneyMatches[moneyMatches.length - 1][2];
       return "";
     }
@@ -1317,20 +1317,20 @@
       const cleaned = normalizeDigits(value || "").replace(/\s+/g, " ").trim();
       if (!cleaned || cleaned.length < 2 || cleaned.length > 60) return false;
       if (/[0-9]/.test(cleaned)) return false;
-      if (/^[:๏ผ,.\-โ€“โ€”!เน]+/.test(cleaned)) return false;
-      if (/[โคโ…๐”ฅ๐“ฆ๐๐โจโญโ€ผ๏ธ]/u.test(cleaned)) return false;
-      if (/(เธชเธเนเธ|เนเธเนเธเธเธทเนเธญ|เธชเธฑเนเธเธเธทเนเธญ|เธญเธธเธ”เธซเธเธธเธ|เธฅเธนเธเธเนเธฒ|เนเธญเธ”เธกเธดเธ|เธชเธดเธเธเนเธฒ|เธเธฅเธญเธ”เธ เธฑเธข|เธเนเธฒเธเธเธธเธ“|เนเธเธฃ|เนเธเธฃเนเธกเธเธฑเนเธ|เธฃเธฒเธเธฒ|เธเธฒเธ—|เธชเนเธเธเธฃเธต|เน€เธเนเธเน€เธเธดเธ|เธเธฅเธฒเธขเธ—เธฒเธ|เธฃเธฑเธเธ—เธฃเธฒเธ|เธเธญเธเธเธธเธ“|เน€เธซเธฅเธทเธญเนเธกเนเธเธตเน|เธเธฒเธ—เธตเธ—เธญเธ|เธฅเธ”เน€เธซเธฅเธทเธญ|เธเธฑเธ”เธชเนเธ|เนเธ—เธฃ|เน€เธเธญเธฃเน)/i.test(cleaned)) return false;
-      if (/(เธ—เธตเนเธญเธขเธนเน|เธ•เธณเธเธฅ|เธญเธณเน€เธ เธญ|เธเธฑเธเธซเธงเธฑเธ”|เนเธเธงเธ|เน€เธเธ•|เธซเธกเธนเนเธเนเธฒเธ|เธเนเธฒเธเน€เธฅเธเธ—เธตเน|เธเธญเธข|เธ–เธเธ|เธฃเธซเธฑเธช|COD)/i.test(cleaned)) return false;
-      return /^[เธ-เธฎเธฐ-เนA-Za-z.'\s]+$/.test(cleaned);
+      if (/^[:：,.\-–—!ๆ]+/.test(cleaned)) return false;
+      if (/[❤✅🔥📦🙏🎉✨⭐‼️]/u.test(cleaned)) return false;
+      if (/(สนใจ|แจ้งชื่อ|สั่งซื้อ|อุดหนุน|ลูกค้า|แอดมิน|สินค้า|ปลอดภัย|บ้านคุณ|โปร|โปรโมชั่น|ราคา|บาท|ส่งฟรี|เก็บเงิน|ปลายทาง|รับทราบ|ขอบคุณ|เหลือไม่กี่|นาทีทอง|ลดเหลือ|จัดส่ง|โทร|เบอร์)/i.test(cleaned)) return false;
+      if (/(ที่อยู่|ตำบล|อำเภอ|จังหวัด|แขวง|เขต|หมู่บ้าน|บ้านเลขที่|ซอย|ถนน|รหัส|COD)/i.test(cleaned)) return false;
+      return /^[ก-ฮะ-์A-Za-z.'\s]+$/.test(cleaned);
     }
 
     function extractName(text) {
       const lines = normalizeDigits(text).split(/\n+/).map((line) => line.trim()).filter(Boolean);
-      const nameLine = lines.find((line) => /^(เธเธทเนเธญ|เธเธธเธ“|เธเธฒเธข|เธเธฒเธ|เธ\.เธช\.)/.test(line) && !/เธ—เธตเนเธญเธขเธนเน|เน€เธเธญเธฃเน|เนเธ—เธฃ/.test(line));
+      const nameLine = lines.find((line) => /^(ชื่อ|คุณ|นาย|นาง|น\.ส\.)/.test(line) && !/ที่อยู่|เบอร์|โทร/.test(line));
       if (nameLine) {
         const candidate = nameLine
-          .replace(/^เธเธทเนเธญ\s*[:๏ผ]?\s*/g, "")
-          .replace(/^(เธเธธเธ“|เธเธฒเธข|เธเธฒเธ|เธเธฒเธเธชเธฒเธง|เธ\.เธช\.)\s*/g, "")
+          .replace(/^ชื่อ\s*[:：]?\s*/g, "")
+          .replace(/^(คุณ|นาย|นาง|นางสาว|น\.ส\.)\s*/g, "")
           .trim();
         if (looksLikeCustomerName(candidate)) return candidate;
       }
@@ -1338,13 +1338,13 @@
       for (const line of lines) {
         const cleaned = line
           .replace(/\b0[689][\d\-\s().]{7,20}/g, "")
-          .replace(/\s*(เน€เธเนเธเน€เธเธดเธเธเธฅเธฒเธขเธ—เธฒเธ|เธเธณเธฃเธฐเน€เธเธดเธเธเธฅเธฒเธขเธ—เธฒเธ|เธเธฅเธฒเธขเธ—เธฒเธ)\s*$/g, "")
+          .replace(/\s*(เก็บเงินปลายทาง|ชำระเงินปลายทาง|ปลายทาง)\s*$/g, "")
           .trim();
         if (!cleaned || /\d/.test(cleaned)) continue;
-        if (/^(เธซเธกเธนเนเธเนเธฒเธ|เธเนเธฒเธเน€เธฅเธเธ—เธตเน|เน€เธฅเธเธ—เธตเน|เธซเธกเธนเน|เธก\.|เธเธญเธข|เธ–เธเธ|เธ•\.|เธ•เธณเธเธฅ|เธญ\.|เธญเธณเน€เธ เธญ|เธ\.|เธเธฑเธเธซเธงเธฑเธ”|เน€เธเธ•|เนเธเธงเธ|เธฃเธซเธฑเธช|เธญเธฒเธเธฒเธฃ|เธซเธญเธเธฑเธ|เธฃเนเธฒเธ|เธ•เธฅเธฒเธ”|เนเธฃเธเธเธฒเธ)/.test(cleaned)) {
+        if (/^(หมู่บ้าน|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส|อาคาร|หอพัก|ร้าน|ตลาด|โรงงาน)/.test(cleaned)) {
           continue;
         }
-        if (/เธ—เธตเนเธญเธขเธนเน|เน€เธเธญเธฃเน|เนเธ—เธฃ|เธฃเธฑเธเธชเธต|เธชเธต|เนเธเธฃ|เธเธธเธ”|COD|เธเธฅเธฒเธขเธ—เธฒเธ|เธชเนเธ|เธฃเธฒเธเธฒ|เธเธฒเธ—/.test(cleaned)) continue;
+        if (/ที่อยู่|เบอร์|โทร|รับสี|สี|โปร|ชุด|COD|ปลายทาง|ส่ง|ราคา|บาท/.test(cleaned)) continue;
         const candidate = cleaned.replace(/\s+/g, " ").trim();
         if (looksLikeCustomerName(candidate)) return candidate;
       }
@@ -1361,7 +1361,7 @@
         const first = cleanAddressLine(lines[i]);
         if (!first || addressScore(first) <= 0) continue;
 
-        const startLooksAddress = /(^\d+|เธซเธกเธนเนเธเนเธฒเธ|เธเนเธฒเธเน€เธฅเธเธ—เธตเน|เน€เธฅเธเธ—เธตเน|เธซเธกเธนเน|เธก\.|เธเธญเธข|เธ–เธเธ|เธ•\.|เธ•เธณเธเธฅ|เธญ\.|เธญเธณเน€เธ เธญ|เธ\.|เธเธฑเธเธซเธงเธฑเธ”|เน€เธเธ•|เนเธเธงเธ|เธฃเธซเธฑเธช)/.test(first);
+        const startLooksAddress = /(^\d+|หมู่บ้าน|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(first);
         if (!startLooksAddress) continue;
 
         const parts = [first];
@@ -1370,7 +1370,7 @@
           const clean = cleanAddressLine(raw);
           if (!clean) continue;
           if (/0[689][\d\-\s().]{7,20}/.test(raw)) continue;
-          if (/เธฃเธฑเธเธชเธต|เธกเธตเธชเธต|เธเธญเธเธทเนเธญ|เนเธเนเธเธเธทเนเธญ|เธเธณเธชเธฑเนเธเธเธทเนเธญ|เธขเธญเธ”เธฃเธงเธก|เธเธญเธเธเธธเธ“|เธชเนเธเนเธ”เธข|เธเธดเธ”|close/.test(raw)) break;
+          if (/รับสี|มีสี|ขอชื่อ|แจ้งชื่อ|คำสั่งซื้อ|ยอดรวม|ขอบคุณ|ส่งโดย|ปิด|close/.test(raw)) break;
           if (addressScore(clean) <= 0 && !/\b\d{5}\b/.test(clean)) break;
           parts.push(clean);
         }
@@ -1383,16 +1383,16 @@
         }
       }
 
-      const hasSubdistrict = /(เธ•\.|เธ•เธณเธเธฅ|เนเธเธงเธ)/.test(best);
-      const hasDistrict = /(เธญ\.|เธญเธณเน€เธ เธญ|เน€เธเธ•)/.test(best);
-      const hasProvince = /(เธ\.|เธเธฑเธเธซเธงเธฑเธ”|เธเธฃเธธเธเน€เธ—เธ|เธเธ—เธก)/.test(best);
+      const hasSubdistrict = /(ต\.|ตำบล|แขวง)/.test(best);
+      const hasDistrict = /(อ\.|อำเภอ|เขต)/.test(best);
+      const hasProvince = /(จ\.|จังหวัด|กรุงเทพ|กทม)/.test(best);
       const needsMoreParts = !hasSubdistrict || !hasDistrict || !hasProvince;
 
       if (best && needsMoreParts) {
         const extraParts = lines
           .map((line) => cleanAddressLine(line))
           .filter((line) => line && !best.includes(line))
-          .filter((line) => /(เธ•\.|เธ•เธณเธเธฅ|เนเธเธงเธ|เธญ\.|เธญเธณเน€เธ เธญ|เน€เธเธ•|เธ\.|เธเธฑเธเธซเธงเธฑเธ”|เธเธฃเธธเธเน€เธ—เธ|เธเธ—เธก|\b\d{5}\b)/.test(line));
+          .filter((line) => /(ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด|กรุงเทพ|กทม|\b\d{5}\b)/.test(line));
 
         if (extraParts.length) {
           return normalizeProvinceTypos([best, ...extraParts].join(" ")).replace(/\s+/g, " ").trim();
@@ -1405,8 +1405,8 @@
     function extractColor(text, page) {
       const normalized = normalizeDigits(text).toLowerCase();
       if (page.type === "size") {
-        if (/\bxl\b|เนเธเธเน\s*xl|เนเธเธ•เน\s*xl|เธเธเธฒเธ”\s*xl/i.test(normalized)) return "XL";
-        if (/\bl\b|เนเธเธเน\s*l|เนเธเธ•เน\s*l|เธเธเธฒเธ”\s*l/i.test(normalized)) return "L";
+        if (/\bxl\b|ไซซ์\s*xl|ไซต์\s*xl|ขนาด\s*xl/i.test(normalized)) return "XL";
+        if (/\bl\b|ไซซ์\s*l|ไซต์\s*l|ขนาด\s*l/i.test(normalized)) return "L";
         return "XL";
       }
 
@@ -1425,11 +1425,11 @@
       if (page.type === "plain") return `${page.product} ${qty}`;
       if (page.type === "size") return `${page.product} ${colorText || "XL"}${qty}`;
 
-      let colors = (colorText || page.defaultColor || "เธ”เธณ")
+      let colors = (colorText || page.defaultColor || "ดำ")
         .split(/[,/ ]+/)
         .map((color) => color.trim())
         .filter(Boolean);
-      if (!colors.length) colors.push(page.defaultColor || "เธ”เธณ");
+      if (!colors.length) colors.push(page.defaultColor || "ดำ");
       if (colors.length > qty) colors = colors.slice(0, qty);
 
       const base = Math.floor(qty / colors.length);
@@ -1479,22 +1479,22 @@
       $("phone").value = phone;
       const locationParts = locationPartsFromAddress(address);
 
-      if (!$("customerName").value.trim()) errors.push("เธขเธฑเธเนเธกเนเธกเธตเธเธทเนเธญเธฅเธนเธเธเนเธฒ");
-      if (!/^0[689]\d{8}$/.test(phone)) errors.push("เน€เธเธญเธฃเนเนเธ—เธฃเธ•เนเธญเธเน€เธเนเธเธกเธทเธญเธ–เธทเธญเนเธ—เธข 10 เธซเธฅเธฑเธ");
-      if (!cod) errors.push("เธขเธฑเธเนเธกเนเนเธ”เนเน€เธฅเธทเธญเธเธฃเธฒเธเธฒ");
-      if (cod && !page.cod[cod] && !$("customCod").value.trim()) errors.push(`COD${cod} เนเธกเนเธญเธขเธนเนเนเธเธฃเธฒเธเธฒเธเธญเธเน€เธเธเธเธตเน`);
-      if ($("customCod").value.trim() && !/^\d{2,5}$/.test($("customCod").value.trim())) errors.push("เธฃเธฒเธเธฒเน€เธญเธเธ•เนเธญเธเน€เธเนเธเธ•เธฑเธงเน€เธฅเธ");
-      if ($("customQty").value.trim() && !/^\d{1,3}$/.test($("customQty").value.trim())) errors.push("เธเธณเธเธงเธเน€เธญเธเธ•เนเธญเธเน€เธเนเธเธ•เธฑเธงเน€เธฅเธ");
-      if (($("customCod").value.trim() && !$("customQty").value.trim()) || (!$("customCod").value.trim() && $("customQty").value.trim())) errors.push("เธ–เนเธฒเนเธเนเธฃเธฒเธเธฒเน€เธญเธ เธ•เนเธญเธเธเธฃเธญเธเธ—เธฑเนเธเธฃเธฒเธเธฒเนเธฅเธฐเธเธณเธเธงเธ");
-      if (!qty) errors.push("เธขเธฑเธเนเธกเนเธกเธตเธเธณเธเธงเธเธชเธดเธเธเนเธฒ");
-      if (!address) errors.push("เธขเธฑเธเนเธกเนเธกเธตเธ—เธตเนเธญเธขเธนเน");
-      if (address && !hasClearHouseNumber(address)) errors.push("เธขเธฑเธเนเธกเนเน€เธซเนเธเธเนเธฒเธเน€เธฅเธเธ—เธตเนเธเธฑเธ”เน€เธเธ");
-      if (address && !locationParts.hasProvince) errors.push("เธ—เธตเนเธญเธขเธนเนเธขเธฑเธเนเธกเนเน€เธซเนเธเธเธฑเธเธซเธงเธฑเธ”เธเธฑเธ”เน€เธเธ");
-      if (page.type === "color" && !$("color").value.trim()) errors.push("เธชเธดเธเธเนเธฒเธเธตเนเธ•เนเธญเธเธกเธตเธชเธต");
-      if (page.type === "color" && $("color").value.split(",").filter(Boolean).length > qty) errors.push("เน€เธฅเธทเธญเธเธชเธตเน€เธเธดเธเธเธณเธเธงเธเธชเธดเธเธเนเธฒ");
+      if (!$("customerName").value.trim()) errors.push("ยังไม่มีชื่อลูกค้า");
+      if (!/^0[689]\d{8}$/.test(phone)) errors.push("เบอร์โทรต้องเป็นมือถือไทย 10 หลัก");
+      if (!cod) errors.push("ยังไม่ได้เลือกราคา");
+      if (cod && !page.cod[cod] && !$("customCod").value.trim()) errors.push(`COD${cod} ไม่อยู่ในราคาของเพจนี้`);
+      if ($("customCod").value.trim() && !/^\d{2,5}$/.test($("customCod").value.trim())) errors.push("ราคาเองต้องเป็นตัวเลข");
+      if ($("customQty").value.trim() && !/^\d{1,3}$/.test($("customQty").value.trim())) errors.push("จำนวนเองต้องเป็นตัวเลข");
+      if (($("customCod").value.trim() && !$("customQty").value.trim()) || (!$("customCod").value.trim() && $("customQty").value.trim())) errors.push("ถ้าใช้ราคาเอง ต้องกรอกทั้งราคาและจำนวน");
+      if (!qty) errors.push("ยังไม่มีจำนวนสินค้า");
+      if (!address) errors.push("ยังไม่มีที่อยู่");
+      if (address && !hasClearHouseNumber(address)) errors.push("ยังไม่เห็นบ้านเลขที่ชัดเจน");
+      if (address && !locationParts.hasProvince) errors.push("ที่อยู่ยังไม่เห็นจังหวัดชัดเจน");
+      if (page.type === "color" && !$("color").value.trim()) errors.push("สินค้านี้ต้องมีสี");
+      if (page.type === "color" && $("color").value.split(",").filter(Boolean).length > qty) errors.push("เลือกสีเกินจำนวนสินค้า");
 
       setErrors(errors);
-      setStatus(errors.length ? "warn" : "ok", errors.length ? `เธ•เนเธญเธเน€เธเนเธ ${errors.length} เธเธธเธ”` : "เธเนเธญเธกเธนเธฅเธเธฃเนเธญเธกเธเธฑเธ”เธฅเธญเธ");
+      setStatus(errors.length ? "warn" : "ok", errors.length ? `ต้องเช็ค ${errors.length} จุด` : "ข้อมูลพร้อมคัดลอก");
       return errors;
     }
 
@@ -1525,10 +1525,10 @@ COD${selectedCod()}
       const locationMatch = findBestLocationRow(address, rows);
       const locationParts = locationPartsFromAddress(address, locationMatch?.row);
 
-      if (!/^0[689]\d{8}$/.test(phone)) errors.push("เน€เธเธญเธฃเนเนเธ—เธฃเนเธกเนเธ–เธนเธเธ•เนเธญเธ เธซเธฃเธทเธญเธขเธฑเธเนเธกเนเธกเธตเน€เธเธญเธฃเนเนเธ—เธฃ");
-      if (!locationParts.hasSubdistrict) errors.push("เธ—เธตเนเธญเธขเธนเนเธขเธฑเธเนเธกเนเธกเธตเธ•เธณเธเธฅ/เนเธเธงเธ");
-      if (!locationParts.hasDistrict) errors.push("เธ—เธตเนเธญเธขเธนเนเธขเธฑเธเนเธกเนเธกเธตเธญเธณเน€เธ เธญ/เน€เธเธ•");
-      if (!locationParts.hasProvince) errors.push("เธ—เธตเนเธญเธขเธนเนเธขเธฑเธเนเธกเนเธกเธตเธเธฑเธเธซเธงเธฑเธ”/เธเธ—เธก.");
+      if (!/^0[689]\d{8}$/.test(phone)) errors.push("เบอร์โทรไม่ถูกต้อง หรือยังไม่มีเบอร์โทร");
+      if (!locationParts.hasSubdistrict) errors.push("ที่อยู่ยังไม่มีตำบล/แขวง");
+      if (!locationParts.hasDistrict) errors.push("ที่อยู่ยังไม่มีอำเภอ/เขต");
+      if (!locationParts.hasProvince) errors.push("ที่อยู่ยังไม่มีจังหวัด/กทม.");
 
       return errors;
     }
@@ -1556,7 +1556,7 @@ COD${selectedCod()}
       $("buildBtn").style.display = isEditing ? "none" : "";
       $("copyBtn").style.display = isEditing ? "none" : "";
       $("nextBtn").style.display = isEditing ? "none" : "";
-      $("saveBtn").textContent = isEditing ? "เธเธฑเธเธ—เธถเธเธญเธญเน€เธ”เธญเธฃเนเนเธงเน" : "เธเธฑเธเธ—เธถเธเนเธงเน";
+      $("saveBtn").textContent = isEditing ? "บันทึกออเดอร์ไว้" : "บันทึกไว้";
     }
 
     function applyFormSnapshot(item) {
@@ -1645,7 +1645,7 @@ COD${selectedCod()}
         form: getFormSnapshot(),
         pageKey: page.key,
         pageName: page.page,
-        title: `${$("prefix").value}${$("orderNo").value} ${$("customerName").value || "เนเธกเนเธฃเธฐเธเธธเธเธทเนเธญ"}`,
+        title: `${$("prefix").value}${$("orderNo").value} ${$("customerName").value || "ไม่ระบุชื่อ"}`,
         time: originalItem ? originalItem.time : new Date().toLocaleString("th-TH"),
         sentAt: originalItem ? originalItem.sentAt : undefined
       };
@@ -1679,21 +1679,21 @@ COD${selectedCod()}
       const { text, errors } = buildOrder();
       const blockingErrors = await blockingOrderErrors();
       if (blockingErrors.length) {
-        alert(`เธชเธฃเนเธฒเธเธญเธญเน€เธ”เธญเธฃเนเนเธกเนเธชเธณเน€เธฃเนเธ\n\n${blockingErrors.map((error) => `- ${error}`).join("\n")}`);
+        alert(`สร้างออเดอร์ไม่สำเร็จ\n\n${blockingErrors.map((error) => `- ${error}`).join("\n")}`);
         setErrors([...blockingErrors, ...errors.filter((error) => !blockingErrors.includes(error))]);
         return;
       }
-      if (!hasClearHouseNumber($("address").value) && !confirm("เธขเธฑเธเนเธกเนเน€เธซเนเธเธเนเธฒเธเน€เธฅเธเธ—เธตเนเธเธฑเธ”เน€เธเธ\n\nเธ–เนเธฒเธฅเธนเธเธเนเธฒเนเธซเนเธชเนเธเธ—เธตเนเธเธฑเนเธก/เธฃเนเธฒเธ/เธ—เธตเนเธ—เธณเธเธฒเธ เธซเธฃเธทเธญเนเธกเนเธกเธตเธเนเธฒเธเน€เธฅเธเธ—เธตเนเธเธฃเธดเธ เน เธชเธฒเธกเธฒเธฃเธ–เธเธ”เธขเธทเธเธขเธฑเธเน€เธเธทเนเธญเธชเธฃเนเธฒเธเธ•เนเธญเนเธ”เน")) {
-        setErrors(["เธขเธฑเธเนเธกเนเน€เธซเนเธเธเนเธฒเธเน€เธฅเธเธ—เธตเนเธเธฑเธ”เน€เธเธ"]);
+      if (!hasClearHouseNumber($("address").value) && !confirm("ยังไม่เห็นบ้านเลขที่ชัดเจน\n\nถ้าลูกค้าให้ส่งที่ปั๊ม/ร้าน/ที่ทำงาน หรือไม่มีบ้านเลขที่จริง ๆ สามารถกดยืนยันเพื่อสร้างต่อได้")) {
+        setErrors(["ยังไม่เห็นบ้านเลขที่ชัดเจน"]);
         return;
       }
       const duplicate = findDuplicateOrder(text);
-      if (duplicate && !confirm(`เธญเธญเน€เธ”เธญเธฃเนเธเธตเนเธญเธฒเธเธเนเธณเธเธฑเธเธฃเธฒเธขเธเธฒเธฃเน€เธ”เธดเธก\n\n${duplicate.title}\n\nเธ•เนเธญเธเธเธฒเธฃเธชเธฃเนเธฒเธเธ•เนเธญเธซเธฃเธทเธญเนเธกเน?`)) {
-        setErrors(["เธเธเธญเธญเน€เธ”เธญเธฃเนเธ—เธตเนเธญเธฒเธเธเนเธณ"]);
+      if (duplicate && !confirm(`ออเดอร์นี้อาจซ้ำกับรายการเดิม\n\n${duplicate.title}\n\nต้องการสร้างต่อหรือไม่?`)) {
+        setErrors(["พบออเดอร์ที่อาจซ้ำ"]);
         return;
       }
       const suspiciousReasons = suspiciousAddressReasons($("address").value);
-      if (suspiciousReasons.length && !confirm(`เธ—เธตเนเธญเธขเธนเนเธญเธฒเธเธกเธตเธเนเธญเธเธงเธฒเธกเธ—เธตเนเนเธกเนเนเธเนเธ—เธตเนเธญเธขเธนเนเธเธเธญเธขเธนเน\n\n${suspiciousReasons.map((reason) => `- ${reason}`).join("\n")}\n\nเธ•เนเธญเธเธเธฒเธฃเธขเธทเธเธขเธฑเธเธชเธฃเนเธฒเธเธญเธญเน€เธ”เธญเธฃเนเธเธตเนเธซเธฃเธทเธญเนเธกเน?`)) {
+      if (suspiciousReasons.length && !confirm(`ที่อยู่อาจมีข้อความที่ไม่ใช่ที่อยู่ปนอยู่\n\n${suspiciousReasons.map((reason) => `- ${reason}`).join("\n")}\n\nต้องการยืนยันสร้างออเดอร์นี้หรือไม่?`)) {
         setErrors(suspiciousReasons);
         return;
       }
@@ -1704,7 +1704,7 @@ COD${selectedCod()}
       }
       clearFormFields();
       showView("form");
-      $("copiedText").textContent = "เธชเธฃเนเธฒเธเธญเธญเน€เธ”เธญเธฃเนเนเธฅเธฐเธเธฑเธ”เธฅเธญเธเนเธฅเนเธง";
+      $("copiedText").textContent = "สร้างออเดอร์และคัดลอกแล้ว";
       setTimeout(() => $("copiedText").textContent = "", 1600);
     }
 
@@ -1746,7 +1746,7 @@ COD${selectedCod()}
 
       const duplicate = findDuplicateOrder(text);
       if (duplicate) {
-        const duplicateError = `เธญเธญเน€เธ”เธญเธฃเนเธเธตเนเธญเธฒเธเธเนเธณเธเธฑเธ ${duplicate.title}`;
+        const duplicateError = `ออเดอร์นี้อาจซ้ำกับ ${duplicate.title}`;
         setErrors([duplicateError]);
         return { ok: false, errors: [duplicateError], text };
       }
@@ -1764,7 +1764,7 @@ COD${selectedCod()}
     async function copyOutput() {
       const { text } = buildOrder();
       await copyText(text);
-      $("copiedText").textContent = "เธเธฑเธ”เธฅเธญเธเนเธฅเนเธง";
+      $("copiedText").textContent = "คัดลอกแล้ว";
       setTimeout(() => $("copiedText").textContent = "", 1600);
     }
 
@@ -1772,7 +1772,7 @@ COD${selectedCod()}
       const text = $("output").value.trim();
       if (!text) return;
       await copyText(text);
-      $("copiedText").textContent = "เธเธฑเธ”เธฅเธญเธเธญเธญเน€เธ”เธญเธฃเนเธเธตเนเนเธฅเนเธง";
+      $("copiedText").textContent = "คัดลอกออเดอร์นี้แล้ว";
       setTimeout(() => $("copiedText").textContent = "", 1600);
     }
 
@@ -1818,7 +1818,7 @@ COD${selectedCod()}
       if (wasEditing) {
         clearFormFields(true);
         showView("form");
-        $("copiedText").textContent = "เธเธฑเธเธ—เธถเธเธญเธญเน€เธ”เธญเธฃเนเธ—เธตเนเนเธเนเนเธเนเธฅเนเธง";
+        $("copiedText").textContent = "บันทึกออเดอร์ที่แก้ไขแล้ว";
         setTimeout(() => $("copiedText").textContent = "", 1600);
       } else {
         showView("orders");
@@ -1848,13 +1848,13 @@ COD${selectedCod()}
       if (!activeOrderPageKey) activeOrderPageKey = currentPage().key;
       const history = store[activeOrderPageKey] || [];
       $("history").innerHTML = "";
-      $("orderListTitle").textContent = `เธฃเธฒเธขเธเธฒเธฃเนเธเน€เธเธ ${pageTitle(activeOrderPageKey)}`;
+      $("orderListTitle").textContent = `รายการในเพจ ${pageTitle(activeOrderPageKey)}`;
 
       if (!history.length) {
         $("output").value = "";
         const empty = document.createElement("div");
         empty.className = "small";
-        empty.textContent = "เธขเธฑเธเนเธกเนเธกเธตเธญเธญเน€เธ”เธญเธฃเนเนเธเน€เธเธเธเธตเน";
+        empty.textContent = "ยังไม่มีออเดอร์ในเพจนี้";
         $("history").appendChild(empty);
         return;
       }
@@ -1863,15 +1863,15 @@ COD${selectedCod()}
       history.forEach((item) => {
         const div = document.createElement("div");
         div.className = "history-item";
-        const status = item.errors && item.errors.length ? `เธ•เนเธญเธเน€เธเนเธ ${item.errors.length} เธเธธเธ”` : "เธเธฃเนเธญเธกเนเธเน";
+        const status = item.errors && item.errors.length ? `ต้องเช็ค ${item.errors.length} จุด` : "พร้อมใช้";
         const lineStatusClass = item.sentAt ? "sent" : "unsent";
-        const lineStatusText = item.sentAt ? "เธชเนเธ LINE เนเธฅเนเธง" : "เธขเธฑเธเนเธกเนเธชเนเธ LINE";
+        const lineStatusText = item.sentAt ? "ส่ง LINE แล้ว" : "ยังไม่ส่ง LINE";
         div.innerHTML = `
           <div class="history-title">${item.title} <span class="small">(${status})</span><span class="line-status ${lineStatusClass}">${lineStatusText}</span></div>
           <div class="history-text">${item.time} - ${item.text.replace(/\n/g, " ")}</div>
           <div class="actions" style="margin-top: 8px">
-            <button class="edit-order-btn" type="button">เนเธเนเนเธ</button>
-            <button class="delete-order-btn" type="button">เธฅเธ</button>
+            <button class="edit-order-btn" type="button">แก้ไข</button>
+            <button class="delete-order-btn" type="button">ลบ</button>
           </div>
         `;
         div.querySelector(".edit-order-btn").addEventListener("click", (event) => {
@@ -1880,7 +1880,7 @@ COD${selectedCod()}
         });
         div.querySelector(".delete-order-btn").addEventListener("click", (event) => {
           event.stopPropagation();
-          if (!confirm(`เธฅเธเธญเธญเน€เธ”เธญเธฃเนเธเธตเน?\n\n${item.title}`)) return;
+          if (!confirm(`ลบออเดอร์นี้?\n\n${item.title}`)) return;
           const latestStore = readOrderStore();
           latestStore[activeOrderPageKey] = (latestStore[activeOrderPageKey] || []).filter((order) => order.id !== item.id);
           writeOrderStore(latestStore);
@@ -1891,7 +1891,7 @@ COD${selectedCod()}
         div.addEventListener("click", () => {
           $("output").value = item.text;
           copyText(item.text);
-          $("copiedText").textContent = "เธเธฑเธ”เธฅเธญเธเธเธฒเธเธเธฃเธฐเธงเธฑเธ•เธดเนเธฅเนเธง";
+          $("copiedText").textContent = "คัดลอกจากประวัติแล้ว";
           setTimeout(() => $("copiedText").textContent = "", 1600);
         });
         $("history").appendChild(div);
@@ -1922,8 +1922,8 @@ COD${selectedCod()}
         card.innerHTML = `
           <strong>${page.prefix} | ${page.page}</strong>
           <div class="summary-total">${total.toLocaleString("th-TH")}</div>
-          <div class="small">${orders.length} เธญเธญเน€เธ”เธญเธฃเน</div>
-          <div class="small" style="margin-top: 8px">${detail || "เธขเธฑเธเนเธกเนเธกเธตเธฃเธฒเธขเธเธฒเธฃ"}</div>
+          <div class="small">${orders.length} ออเดอร์</div>
+          <div class="small" style="margin-top: 8px">${detail || "ยังไม่มีรายการ"}</div>
         `;
         $("summaryList").appendChild(card);
       });
