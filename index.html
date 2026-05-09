@@ -631,6 +631,7 @@
     ];
     const thaiLocationCacheKey = "thaiLocationRowsV2";
     let thaiLocationRowsPromise = null;
+    let locationSuggestTimer = null;
 
     const fallbackLocationRows = [
       { province: "กรุงเทพมหานคร", district: "ปทุมวัน", subdistrict: "ปทุมวัน", postalCode: "10330" },
@@ -826,7 +827,17 @@
     }
 
     function applyLocationRow(row) {
-      const current = normalizeAddressText($("address").value.trim() || $("raw").value.trim());
+      const rawText = $("raw").value.trim();
+      if (!$("phone").value.trim()) {
+        const phone = extractPhone(rawText);
+        if (phone) $("phone").value = phone;
+      }
+      if (!$("customerName").value.trim()) {
+        const name = extractName(rawText);
+        if (name) $("customerName").value = name;
+      }
+
+      const current = normalizeAddressText($("address").value.trim() || rawText);
       const phone = extractPhone(current);
       let value = phone ? current.replace(phone, "") : current;
       value = value.replace(/\b\d{5}\b/g, "").trim();
@@ -844,6 +855,20 @@
       hideLocationSuggestions();
       validateOnly();
       buildOrder();
+    }
+
+    function scheduleLocationSuggestionsFromRaw() {
+      clearTimeout(locationSuggestTimer);
+      const text = $("raw").value.trim();
+      if (text.length < 6) {
+        hideLocationSuggestions();
+        return;
+      }
+      locationSuggestTimer = setTimeout(() => {
+        const phone = extractPhone(text);
+        const candidate = extractAddress(text) || normalizeAddressText(phone ? text.replace(phone, "") : text);
+        showLocationSuggestionsForAddress(candidate);
+      }, 350);
     }
 
     async function showLocationSuggestionsForAddress(address) {
@@ -1755,6 +1780,8 @@ COD${selectedCod()}
         });
       });
 
+      $("raw").addEventListener("input", scheduleLocationSuggestionsFromRaw);
+      $("raw").addEventListener("paste", () => setTimeout(scheduleLocationSuggestionsFromRaw, 0));
       $("address").addEventListener("blur", () => {
         showLocationSuggestionsForAddress($("address").value);
       });
