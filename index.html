@@ -882,7 +882,7 @@
       const candidate = $("address").value.trim() || extractAddress(rawText) || rawText;
       const base = stripExistingLocationParts(candidate, row);
       const location = formatLocationRow(row);
-      const finalAddress = normalizeAddressText([base, location].filter(Boolean).join(" "));
+      const finalAddress = cleanAddressForOrder([base, location].filter(Boolean).join(" "));
 
       $("raw").value = finalAddress;
       $("address").value = finalAddress;
@@ -1201,6 +1201,38 @@
       });
     }
 
+    const addressStartPattern = /(?:บ้านเลขที่|เลขที่|หมู่บ้าน|อาคาร|หอพัก|ร้าน|ตลาด|ปั๊ม|ปตท|บริษัท|โรงงาน|ถนน|ซอย|ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด|\d{1,5}(?:\/\d{1,5})?)/;
+    const addressNoisePattern = /(โปร|แถม|ส่งฟรี|ค่าส่ง|ขอบคุณ|คำสั่งซื้อ|รับทราบ|แอดมิน|สีไหนดี|รับสี|มีสี|ชุดเลย|ยอดรวม|ราคา|บาท|COD|ขอชื่อ|แจ้งชื่อ|เบอร์โทรที่แจ้ง|ชำระเงิน|เก็บเงินปลายทาง|ส่งโดย|ปิด|close)/;
+
+    function cleanAddressForOrder(address) {
+      let value = normalizeAddressText(address || "");
+      value = value.replace(/\b0[689][\d\-\s().]{7,20}/g, " ");
+      value = value.replace(/(?:โทร|เบอร์|เบอร์โทร|โทรศัพท์)\s*[:：.]?\s*$/g, " ");
+      value = value.replace(/(?:COD|คำสั่งซื้อ|ยอดรวม|ยอด)\s*[:：.]?\s*\d{2,5}/gi, " ");
+      value = value.replace(/\b\d{2,5}\s*บาท\b/g, " ");
+
+      const startMatch = value.match(addressStartPattern);
+      if (startMatch && startMatch.index > 0) {
+        const before = value.slice(0, startMatch.index);
+        if (addressNoisePattern.test(before)) {
+          value = value.slice(startMatch.index);
+        }
+      }
+
+      value = value.replace(/^(?:รับสี.*?|.*?ขอชื่อ.*?|.*?แจ้งชื่อ.*?)(?=(บ้านเลขที่|เลขที่|หมู่บ้าน|อาคาร|หอพัก|ร้าน|ตลาด|ปั๊ม|ปตท|บริษัท|โรงงาน|ถนน|ซอย|ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด|\d))/g, "");
+      value = value.replace(/\s+(?:รับสี|สีไหนดี|โปร|ยอดรวม|ขอบคุณ|แจ้งชื่อ|ขอชื่อ|แอดมิน|คำสั่งซื้อ|รับทราบ|ส่งโดย|ราคา|บาท|ชำระเงิน|เก็บเงินปลายทาง|ปิด|close).*$/g, "");
+      value = cleanAddressLine(value);
+      return value.replace(/\s+/g, " ").trim();
+    }
+
+    function suspiciousAddressReasons(address) {
+      const value = normalizeAddressText(address || "");
+      const reasons = [];
+      if (addressNoisePattern.test(value)) reasons.push("ที่อยู่ยังมีข้อความที่อาจไม่ใช่ที่อยู่ปนอยู่");
+      if (value.length > 180) reasons.push("ที่อยู่ยาวผิดปกติ ควรเช็คก่อนสร้าง");
+      return reasons;
+    }
+
     function cleanAddressLine(line) {
       let value = normalizeAddressText(line.trim());
       if (!/(หมู่บ้าน|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(value)) {
@@ -1395,7 +1427,7 @@
       if (name) {
         $("customerName").value = name;
       }
-      if (address) $("address").value = address;
+      if (address) $("address").value = cleanAddressForOrder(address);
       if (color) setSelectedOptionText(color);
       updateProductLine();
       validateOnly();
@@ -1413,7 +1445,8 @@
       const page = currentPage();
       const cod = selectedCod();
       const qty = selectedQty();
-      const address = normalizeAddressText($("address").value.trim());
+      const address = cleanAddressForOrder($("address").value.trim());
+      $("address").value = address;
       const phone = normalizePhoneInput($("phone").value.trim());
       $("phone").value = phone;
       const locationParts = locationPartsFromAddress(address);
@@ -1439,7 +1472,7 @@
 
     function buildOrder() {
       updateProductLine();
-      $("address").value = normalizeAddressText($("address").value.trim());
+      $("address").value = cleanAddressForOrder($("address").value.trim());
       $("phone").value = normalizePhoneInput($("phone").value.trim());
       const errors = validateOnly();
       const text = `${$("prefix").value}${$("orderNo").value}${$("customerName").value.trim()}
@@ -1458,8 +1491,8 @@ COD${selectedCod()}
       const errors = [];
       const phone = normalizePhoneInput($("phone").value.trim());
       $("phone").value = phone;
-      $("address").value = await enhanceAddressWithThaiLocations($("address").value.trim());
-      const address = normalizeAddressText($("address").value.trim());
+      $("address").value = cleanAddressForOrder(await enhanceAddressWithThaiLocations($("address").value.trim()));
+      const address = cleanAddressForOrder($("address").value.trim());
       const rows = await loadThaiLocationRows();
       const locationMatch = findBestLocationRow(address, rows);
       const locationParts = locationPartsFromAddress(address, locationMatch?.row);
@@ -1631,6 +1664,11 @@ COD${selectedCod()}
         setErrors(["พบออเดอร์ที่อาจซ้ำ"]);
         return;
       }
+      const suspiciousReasons = suspiciousAddressReasons($("address").value);
+      if (suspiciousReasons.length && !confirm(`ที่อยู่อาจมีข้อความที่ไม่ใช่ที่อยู่ปนอยู่\n\n${suspiciousReasons.map((reason) => `- ${reason}`).join("\n")}\n\nต้องการยืนยันสร้างออเดอร์นี้หรือไม่?`)) {
+        setErrors(suspiciousReasons);
+        return;
+      }
       saveOrderToCurrentPage(text, errors);
       await copyText(text);
       if (shouldAdvance) {
@@ -1641,6 +1679,59 @@ COD${selectedCod()}
       $("copiedText").textContent = "สร้างออเดอร์และคัดลอกแล้ว";
       setTimeout(() => $("copiedText").textContent = "", 1600);
     }
+
+    window.orderHelperCreateFromBot = async function orderHelperCreateFromBot(rawText, pageKey = "") {
+      if (pageKey && pages.some((page) => page.key === pageKey)) {
+        const targetPage = pages.find((page) => page.key === pageKey);
+        const targetGroup = pageGroups.find((group) => group.key === targetPage.prefix);
+        if (targetGroup && activeGroup?.key !== targetGroup.key) {
+          activeGroup = targetGroup;
+          localStorage.setItem("activePageGroup", activeGroup.key);
+          document.body.classList.remove("admin-locked");
+          $("adminGate").style.display = "none";
+          renderPageSelect();
+        }
+        $("page").value = pageKey;
+        $("page").dispatchEvent(new Event("change"));
+      }
+
+      $("raw").value = rawText || "";
+      await fillFromRaw();
+
+      const rows = await loadThaiLocationRows();
+      const suggestions = findLocationSuggestions($("address").value || $("raw").value, rows, 1);
+      if (suggestions.length) {
+        applyLocationRow(suggestions[0].row);
+      }
+
+      $("phone").value = normalizePhoneInput($("phone").value);
+      $("address").value = cleanAddressForOrder(await enhanceAddressWithThaiLocations($("address").value));
+      const { text, errors } = buildOrder();
+      const blockingErrors = await blockingOrderErrors();
+      const suspiciousReasons = suspiciousAddressReasons($("address").value);
+      const allErrors = [...blockingErrors, ...errors.filter((error) => !blockingErrors.includes(error)), ...suspiciousReasons];
+
+      if (allErrors.length) {
+        setErrors(allErrors);
+        return { ok: false, errors: allErrors, text };
+      }
+
+      const duplicate = findDuplicateOrder(text);
+      if (duplicate) {
+        const duplicateError = `ออเดอร์นี้อาจซ้ำกับ ${duplicate.title}`;
+        setErrors([duplicateError]);
+        return { ok: false, errors: [duplicateError], text };
+      }
+
+      const shouldAdvance = !editingOrder;
+      saveOrderToCurrentPage(text, errors);
+      await copyText(text);
+      if (shouldAdvance) {
+        $("orderNo").value = String((Number($("orderNo").value || 0) || 0) + 1);
+      }
+      clearFormFields();
+      return { ok: true, errors: [], text };
+    };
 
     async function copyOutput() {
       const { text } = buildOrder();
