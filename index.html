@@ -441,7 +441,7 @@
 </style>
 </head>
 <body class="form-mode admin-locked">
-  <div class="app-version" id="appVersion">v2026-05-09 23:40</div>
+  <div class="app-version" id="appVersion">v2026-05-11 06:45</div>
   <section class="admin-gate" id="adminGate">
     <div class="admin-card">
       <h1>เลือกแอดมิน</h1>
@@ -1352,6 +1352,44 @@
       return "";
     }
 
+    function stripMetaBotMarkers(text) {
+      return String(text || "").replace(/^__META_FB_NAME__=.*(?:\r?\n)?/m, "");
+    }
+
+    function extractMetaFbNameMarker(text) {
+      const match = String(text || "").match(/^__META_FB_NAME__=(.+)$/m);
+      const name = match ? match[1].replace(/\s+/g, " ").trim() : "";
+      return looksLikeCustomerName(name) ? name : "";
+    }
+
+    function isProbablyMetaUiName(value) {
+      const cleaned = normalizeDigits(value || "").replace(/\s+/g, " ").trim();
+      if (!cleaned) return true;
+      const uiWords = [
+        "กล่องข้อความ",
+        "ข้อความทั้งหมด",
+        "Messenger",
+        "Instagram",
+        "WhatsApp",
+        "มอบหมายการสนทนานี้",
+        "เปิดดรอปดาวน์",
+        "ดูโฆษณา",
+        "รายละเอียดผู้ติดต่อ",
+        "ตอบกลับใน Messenger",
+        "สินค้าเพิ่มเติม"
+      ];
+      return uiWords.some((word) => cleaned === word || cleaned.includes(word));
+    }
+
+    function applyMetaFbName(rawText) {
+      const metaFbName = extractMetaFbNameMarker(rawText);
+      if (!metaFbName) return;
+      $("fbName").value = metaFbName;
+      if (isProbablyMetaUiName($("customerName").value)) {
+        $("customerName").value = metaFbName;
+      }
+    }
+
     function extractAddress(text) {
       const lines = normalizeDigits(text).split(/\n+/).map((line) => line.trim()).filter(Boolean);
       let best = "";
@@ -1723,8 +1761,10 @@ COD${selectedCod()}
         $("page").dispatchEvent(new Event("change"));
       }
 
-      $("raw").value = rawText || "";
+      const originalRawText = rawText || "";
+      $("raw").value = stripMetaBotMarkers(originalRawText);
       await fillFromRaw();
+      applyMetaFbName(originalRawText);
 
       const rows = await loadThaiLocationRows();
       const suggestions = findLocationSuggestions($("address").value || $("raw").value, rows, 1);
@@ -1935,12 +1975,16 @@ COD${selectedCod()}
 
       $("page").addEventListener("change", () => {
         const page = currentPage();
+        activeOrderPageKey = page.key;
         $("prefix").value = page.prefix;
         $("orderNo").value = nextOrderNoForPage(page.key);
         populatePriceOptions(page);
         populateOptionChoices(page);
         updateProductLine();
         validateOnly();
+        renderPageTabs();
+        renderHistory();
+        renderSummary();
       });
 
       $("price").addEventListener("change", () => {
