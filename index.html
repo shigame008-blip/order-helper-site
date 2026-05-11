@@ -441,7 +441,7 @@
 </style>
 </head>
 <body class="form-mode admin-locked">
-  <div class="app-version" id="appVersion">v2026-05-11 06:45</div>
+  <div class="app-version" id="appVersion">v2026-05-11 09:05</div>
   <section class="admin-gate" id="adminGate">
     <div class="admin-card">
       <h1>เลือกแอดมิน</h1>
@@ -494,6 +494,14 @@
           <div class="field">
             <label for="customQty">จำนวนเอง</label>
             <input id="customQty" inputmode="numeric" autocomplete="off" placeholder="เช่น 6">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>การชำระเงิน</label>
+          <div class="choice-wrap" id="paymentChoices">
+            <label><input type="radio" name="paymentMode" value="cod" checked> COD</label>
+            <label><input type="radio" name="paymentMode" value="transfer"> โอน</label>
           </div>
         </div>
 
@@ -861,6 +869,7 @@
 
     function stripExistingLocationParts(value, row) {
       let text = normalizeAddressText(value);
+      text = removeInlineAddressNoise(text);
       const phone = extractPhone(text);
       if (phone) text = text.replace(new RegExp(escapeRegExp(phone), "g"), "");
       text = text.replace(/\b\d{5}\b/g, "");
@@ -1133,6 +1142,16 @@
       return Number(page.cod[selectedCod()] || 0);
     }
 
+    function paymentMode() {
+      return document.querySelector("input[name='paymentMode']:checked")?.value || "cod";
+    }
+
+    function setPaymentMode(mode) {
+      const value = mode === "transfer" ? "transfer" : "cod";
+      const input = document.querySelector(`input[name='paymentMode'][value='${value}']`);
+      if (input) input.checked = true;
+    }
+
     function populatePriceOptions(page, selectedValue = "") {
       $("price").innerHTML = "";
       Object.entries(page.cod).forEach(([cod, qty]) => {
@@ -1219,8 +1238,22 @@
     const addressStartPattern = /(?:บ้านเลขที่|เลขที่|หมู่บ้าน|อาคาร|หอพัก|ร้าน|ตลาด|ปั๊ม|ปตท|บริษัท|โรงงาน|ถนน|ซอย|ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด|\d{1,5}(?:\/\d{1,5})?)/;
     const addressNoisePattern = /(โปร|แถม|ส่งฟรี|ค่าส่ง|ขอบคุณ|คำสั่งซื้อ|รับทราบ|แอดมิน|สีไหนดี|รับสี|มีสี|ชุดเลย|ยอดรวม|ราคา|บาท|COD|ขอชื่อ|แจ้งชื่อ|เบอร์โทรที่แจ้ง|ชำระเงิน|เก็บเงินปลายทาง|ส่งโดย|ปิด|close)/;
 
+    function removeInlineAddressNoise(text) {
+      let value = normalizeAddressText(text || "");
+      const locationLookahead = "(?=(?:ต\\.|ตำบล|แขวง|อ\\.|อำเภอ|เขต|จ\\.|จังหวัด|\\b\\d{5}\\b|$))";
+      value = value.replace(new RegExp("\\s*(?:สินค้า|สินค้าที่สั่ง|รายการสินค้า)\\s*[:：.]?\\s*.*?" + locationLookahead, "g"), " ");
+      value = value.replace(new RegExp("\\s*(?:รหัสไปรษณีย์|เบอร์โทรติดต่อ|เบอร์โทรที่แจ้ง|ขอชื่อ\\s*ที่อยู่\\s*และเบอร์โทร(?:ติดต่อ)?ได้เลย)\\s*[:：.]?\\s*.*?" + locationLookahead, "g"), " ");
+      value = value.replace(/\s*และอื่นๆ\s+.{0,40}?และอื่นๆ\s+\d+\s*รายการ\s*/g, " ");
+      value = value.replace(/\s*และอื่นๆ\s+\d+\s*รายการ\s*/g, " ");
+      value = value.replace(/\s+\d+\s+\d+\s*ชุด(?=\s*(?:ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด|\b\d{5}\b|$))/g, " ");
+      value = value.replace(/\s+\d+\s*ชุด(?=\s*(?:ต\.|ตำบล|แขวง|อ\.|อำเภอ|เขต|จ\.|จังหวัด|\b\d{5}\b|$))/g, " ");
+      value = value.replace(/\s*(?:1|2|3|4)\s*ชุด\s*$/g, " ");
+      return value.replace(/\s+/g, " ").trim();
+    }
+
     function cleanAddressForOrder(address) {
       let value = normalizeAddressText(address || "");
+      value = removeInlineAddressNoise(value);
       value = value.replace(/\b0[689][\d\-\s().]{7,20}/g, " ");
       value = value.replace(/(?:โทร|เบอร์|เบอร์โทร|โทรศัพท์)\s*[:：.]?\s*$/g, " ");
       value = value.replace(/(?:COD|คำสั่งซื้อ|ยอดรวม|ยอด)\s*[:：.]?\s*\d{2,5}/gi, " ");
@@ -1250,6 +1283,7 @@
 
     function cleanAddressLine(line) {
       let value = normalizeAddressText(line.trim());
+      value = removeInlineAddressNoise(value);
       if (!/(หมู่บ้าน|บ้านเลขที่|เลขที่|หมู่|ม\.|ซอย|ถนน|ต\.|ตำบล|อ\.|อำเภอ|จ\.|จังหวัด|เขต|แขวง|รหัส)/.test(value)) {
         value = value.replace(/^[^\d]{2,80}(?=\d)/g, "");
       }
@@ -1449,25 +1483,46 @@
       }
 
       const colorNames = page.colors || [];
+      const colorNoise = /(มีสีให้เลือก|ตอนนี้มีสี|มีสี|สีอะไร|รับสีไหนดี|สนใจรับสี|คุณพี่รับสี|รับสีไหน|สีสวย|สีชัด|ตรงปก|โปรโมชั่น|โปร|ราคา|บาท|แถม|ส่งฟรี|เลือกสี)/;
+      const lines = normalized.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+      let searchLines = lines.filter((line) => {
+        const count = colorNames.filter((color) => line.includes(color)).length;
+        if (!count) return false;
+        if (colorNoise.test(line)) return false;
+        if (count >= 3 && line.length > 25) return false;
+        return /สี|ชุด|เรือน|เอา|ขอ|รับ|จัด|[0-9]/.test(line);
+      });
+
+      if (!searchLines.length) {
+        searchLines = lines.slice(-18).filter((line) => {
+          const count = colorNames.filter((color) => line.includes(color)).length;
+          return count > 0 && !colorNoise.test(line) && !(count >= 3 && line.length > 25);
+        });
+      }
+
+      const searchText = searchLines.join("\n");
       const found = [];
       colorNames.forEach((color) => {
-        const pos = normalized.indexOf(color);
-        if (pos !== -1) found.push({ color, pos });
+        const regex = new RegExp(`(?:สี\\s*)?${escapeRegExp(color)}(?:\\s*\\d+\\s*(?:ชุด|เรือน))?`, "g");
+        let match;
+        while ((match = regex.exec(searchText)) !== null) {
+          found.push({ color, pos: match.index });
+        }
       });
       found.sort((a, b) => a.pos - b.pos);
       const unique = [...new Set(found.map((item) => item.color))];
-      return unique.join(",") || page.defaultColor || "";
+      return unique.join(",");
     }
 
     function colorProductText(page, qty, colorText) {
       if (page.type === "plain") return `${page.product} ${qty}`;
       if (page.type === "size") return `${page.product} ${colorText || "XL"}${qty}`;
 
-      let colors = (colorText || page.defaultColor || "ดำ")
+      let colors = (colorText || "")
         .split(/[,/ ]+/)
         .map((color) => color.trim())
         .filter(Boolean);
-      if (!colors.length) colors.push(page.defaultColor || "ดำ");
+      if (!colors.length) return page.product;
       if (colors.length > qty) colors = colors.slice(0, qty);
 
       const base = Math.floor(qty / colors.length);
@@ -1490,10 +1545,12 @@
 
       if (phone) $("phone").value = phone;
       if (cod && page.cod[cod]) $("price").value = cod;
+      setPaymentMode(/(^|\s)(โอน|โอนแล้ว|โอนเงิน|ชำระแล้ว|จ่ายแล้ว)(\s|$)/.test(raw) ? "transfer" : "cod");
       if (name) {
         $("customerName").value = name;
       }
       if (address) $("address").value = cleanAddressForOrder(address);
+      if (page.type === "color") setSelectedOptionText("");
       if (color) setSelectedOptionText(color);
       updateProductLine();
       validateOnly();
@@ -1541,12 +1598,13 @@
       $("address").value = cleanAddressForOrder($("address").value.trim());
       $("phone").value = normalizePhoneInput($("phone").value.trim());
       const errors = validateOnly();
+      const paymentLine = paymentMode() === "transfer" ? "โอน" : `COD${selectedCod()}`;
       const text = `${$("prefix").value}${$("orderNo").value}${$("customerName").value.trim()}
 T.${$("phone").value.trim()}
 
 FB ${$("fbName").value.trim() || $("customerName").value.trim()}
 ${$("address").value.trim()}
-COD${selectedCod()}
+${paymentLine}
 
 ***${$("productLine").value.trim()}*`;
       $("output").value = text;
@@ -1585,7 +1643,8 @@ COD${selectedCod()}
         phone: $("phone").value,
         address: $("address").value,
         color: $("color").value,
-        productLine: $("productLine").value
+        productLine: $("productLine").value,
+        paymentMode: paymentMode()
       };
     }
 
@@ -1613,6 +1672,7 @@ COD${selectedCod()}
       $("address").value = data.address || "";
       setSelectedOptionText(data.color || "");
       $("productLine").value = data.productLine || "";
+      setPaymentMode(data.paymentMode || "cod");
       editingOrder = { id: item.id, pageKey: item.pageKey || data.pageKey };
       updateEditModeUi();
       validateOnly();
@@ -1624,16 +1684,18 @@ COD${selectedCod()}
       const first = lines[0] || "";
       const prefixMatch = first.match(/^([A-Z]+)(\d+)(.*)$/);
       const codMatch = text.match(/COD(\d+)/);
+      const transferMatch = lines.some((line) => line.trim() === "โอน");
       const productMatch = text.match(/\*\*\*(.*)\*$/m);
       const fbLine = lines.find((line) => line.startsWith("FB ")) || "";
       const phoneLine = lines.find((line) => line.startsWith("T.")) || "";
-      const codIndex = lines.findIndex((line) => line.startsWith("COD"));
+      const codIndex = lines.findIndex((line) => line.startsWith("COD") || line.trim() === "โอน");
       const fbIndex = lines.findIndex((line) => line.startsWith("FB "));
       return {
         pageKey,
         price: codMatch ? codMatch[1] : "",
         customCod: "",
         customQty: "",
+        paymentMode: transferMatch ? "transfer" : "cod",
         prefix: prefixMatch ? prefixMatch[1] : "",
         orderNo: prefixMatch ? prefixMatch[2] : "",
         customerName: prefixMatch ? prefixMatch[3] : "",
@@ -1826,6 +1888,7 @@ COD${selectedCod()}
         $("customCod").value = "";
         $("customQty").value = "";
       }
+      setPaymentMode("cod");
       setSelectedOptionText(currentPage().type === "size" ? "XL" : "");
       updateProductLine();
       validateOnly();
@@ -1995,6 +2058,10 @@ COD${selectedCod()}
       });
 
       $("optionChoices").addEventListener("change", syncOptionValue);
+      $("paymentChoices").addEventListener("change", () => {
+        buildOrder();
+        validateOnly();
+      });
 
       ["customerName", "fbName", "phone", "address", "prefix", "orderNo", "customCod", "customQty"].forEach((id) => {
         $(id).addEventListener("input", () => {
